@@ -79,5 +79,8 @@ def Main():
         blocks.Draw(WINDOW)
         buttons.Draw(WINDOW, events)
 
+        if buttons.buttonGenSet.clicked:
+            blocks.Generate(buttons.sliderSize.value)
+
 
 Main()
