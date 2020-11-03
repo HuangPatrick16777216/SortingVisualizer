@@ -58,7 +58,7 @@ class Blocks:
 
 class Buttons:
     sliderSize = Slider((20, 20), (200, 10), valRange=(20, 350), initialVal=100, font=FONT_SMALL, text="Set Size", textCol=WHITE)
-    sliderSpeed = Slider((20, 100), (200, 10), valRange=(10, 120), initialVal=30, font=FONT_SMALL, text="Speed", textCol=WHITE)
+    sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 60), initialVal=20, font=FONT_SMALL, text="Speed", textCol=WHITE)
     buttonGenSet = ButtonText((250, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
 
     buttonInsertion =  ButtonText((450, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
@@ -76,10 +76,9 @@ class Buttons:
 def Insertion(elements, fpsSlider):
     clock = pygame.time.Clock()
     for i in range(1, len(elements)):
-        clock.tick(fpsSlider.value/2)
+        clock.tick(fpsSlider.value)
         for e in elements:
             e[1] = WHITE
-
         if stopProcess:
             return
 
@@ -91,6 +90,27 @@ def Insertion(elements, fpsSlider):
             j -= 1
         elements[j+1][0] = currNum
         elements[j+1][1] = RED
+
+    for e in elements:
+        e[1] = GREEN
+
+def Selection(elements, fpsSlider):
+    clock = pygame.time.Clock()
+    for i in range(len(elements)):
+        clock.tick(fpsSlider.value)
+        for e in elements:
+            e[1] = WHITE
+        if stopProcess:
+            return
+        
+        minInd = i
+        for j in range(i+1, len(elements)):
+            if elements[minInd] > elements[j]:
+                minInd = j
+
+        elements[i], elements[minInd] = elements[minInd], elements[i]
+        elements[minInd][1] = GREEN
+        elements[i][1] = RED
 
     for e in elements:
         e[1] = GREEN
@@ -121,7 +141,7 @@ def Main():
         
         if buttons.buttonInsertion.clicked:
             stopProcess = False
-            threading.Thread(target=Insertion, args=(blocks.elements, buttons.sliderSpeed)).start()
+            threading.Thread(target=Selection, args=(blocks.elements, buttons.sliderSpeed)).start()
 
         if buttons.buttonStop.clicked:
             stopProcess = True
