@@ -20,6 +20,7 @@ import random
 import threading
 from pumpkinpy.pygameutils.elements import ButtonText, Slider
 
+# Global variables
 SCREEN = (1600, 900)
 FPS = 60
 
@@ -40,6 +41,7 @@ stopProcess = False
 processing = False
 
 
+# Interface
 class Blocks:
     sizeRange = (50, 600)
     bigPadding = 50
@@ -76,6 +78,7 @@ class Buttons:
         self.buttonStop.Draw(window, events)
             
 
+# Algorithms
 def Insertion(elements, fpsSlider):
     global processing
     clock = pygame.time.Clock()
@@ -123,6 +126,7 @@ def Selection(elements, fpsSlider):
     processing = False
 
 
+# Loop
 def Main():
     global stopProcess, processing
 
