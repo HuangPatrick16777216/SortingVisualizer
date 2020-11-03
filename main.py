@@ -15,7 +15,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
 import pygame
 import random
 import threading
@@ -37,6 +36,7 @@ FONT_SMALL = pygame.font.SysFont("comicsans", 18)
 FONT_MEDIUM = pygame.font.SysFont("comicsans", 24)
 
 stopProcess = False
+processing = False
 
 
 class Blocks:
@@ -61,7 +61,8 @@ class Buttons:
     sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 60), initialVal=20, font=FONT_SMALL, text="Speed", textCol=WHITE)
     buttonGenSet = ButtonText((250, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
 
-    buttonInsertion =  ButtonText((450, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
+    buttonInsertion = ButtonText((450, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
+    buttonSelection = ButtonText((650, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Selection", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
@@ -70,10 +71,12 @@ class Buttons:
         self.buttonGenSet.Draw(window, events)
 
         self.buttonInsertion.Draw(window, events)
+        self.buttonSelection.Draw(window, events)
         self.buttonStop.Draw(window, events)
             
 
 def Insertion(elements, fpsSlider):
+    global processing
     clock = pygame.time.Clock()
     for i in range(1, len(elements)):
         clock.tick(fpsSlider.value)
@@ -93,8 +96,10 @@ def Insertion(elements, fpsSlider):
 
     for e in elements:
         e[1] = GREEN
+    processing = False
 
 def Selection(elements, fpsSlider):
+    global processing
     clock = pygame.time.Clock()
     for i in range(len(elements)):
         clock.tick(fpsSlider.value)
@@ -114,10 +119,11 @@ def Selection(elements, fpsSlider):
 
     for e in elements:
         e[1] = GREEN
+    processing = False
 
 
 def Main():
-    global stopProcess
+    global stopProcess, processing
 
     clock = pygame.time.Clock()
     blocks = Blocks()
@@ -139,12 +145,19 @@ def Main():
         if buttons.buttonGenSet.clicked:
             blocks.Generate(buttons.sliderSize.value)
         
-        if buttons.buttonInsertion.clicked:
-            stopProcess = False
-            threading.Thread(target=Selection, args=(blocks.elements, buttons.sliderSpeed)).start()
+        if not processing:
+            if buttons.buttonInsertion.clicked:
+                stopProcess = False
+                threading.Thread(target=Insertion, args=(blocks.elements, buttons.sliderSpeed)).start()
+                processing = True
+            if buttons.buttonSelection.clicked:
+                stopProcess = False
+                threading.Thread(target=Selection, args=(blocks.elements, buttons.sliderSpeed)).start()
+                processing = True
 
         if buttons.buttonStop.clicked:
             stopProcess = True
+            processing = False
 
 
 Main()
