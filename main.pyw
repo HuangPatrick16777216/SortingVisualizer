@@ -139,9 +139,11 @@ def Selection(elements, fpsSlider):
 def Bubble(elements, fpsSlider):
     global processing
     clock = pygame.time.Clock()
+
+    doneNum = 0
     while True:
         solved = True
-        for i in range(len(elements)-1):
+        for i in range(len(elements)-1-doneNum):
             clock.tick(fpsSlider.value)
             for e in elements:
                 e[1] = WHITE
@@ -155,6 +157,7 @@ def Bubble(elements, fpsSlider):
             elements[i][1] = GREEN
             elements[i+1][1] = RED
         
+        doneNum += 1
         if solved:
             break
 
