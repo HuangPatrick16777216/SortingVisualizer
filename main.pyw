@@ -68,6 +68,7 @@ class Buttons:
     buttonSelection = ButtonText((700, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Selection", 1, BLACK), border=3, borderCol=WHITE)
     buttonBubble = ButtonText((700, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Bubble", 1, BLACK), border=3, borderCol=WHITE)
     buttonCocktail = ButtonText((500, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Cocktail", 1, BLACK), border=3, borderCol=WHITE)
+    buttonPigeonhole = ButtonText((900, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Pigeonhole", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
@@ -79,6 +80,7 @@ class Buttons:
         self.buttonSelection.Draw(window, events)
         self.buttonBubble.Draw(window, events)
         self.buttonCocktail.Draw(window, events)
+        self.buttonPigeonhole.Draw(window, events)
         self.buttonStop.Draw(window, events)
             
 
@@ -200,6 +202,37 @@ def Cocktail(elements, fpsSlider):
         e[1] = BLUE
     processing = False
 
+def PigeonHole(elements, fpsSlider):
+    global processing
+    clock = pygame.time.Clock()
+    
+    values = [x[0] for x in elements]
+    minimum = min(values)
+    maximum = max(values)
+    size = maximum - minimum + 1
+
+    holes = [0 for _ in range(size)]
+    for x in elements:
+        holes[x[0]-minimum] += 1
+
+    i = 0
+    for count in range(size):
+        clock.tick(fpsSlider.value)
+        if stopProcess:
+            return
+
+        while holes[count] > 0:
+            holes[count] -= 1
+            elements[i][0] = count + minimum
+            for e in elements:
+                e[1] = WHITE
+            elements[i][1] = GREEN
+            i += 1
+
+    for e in elements:
+        e[1] = BLUE
+    processing = False
+
 
 # Loop
 def Main():
@@ -241,6 +274,10 @@ def Main():
             if buttons.buttonCocktail.clicked:
                 stopProcess = False
                 threading.Thread(target=Cocktail, args=(blocks.elements, buttons.sliderSpeed)).start()
+                processing = True
+            if buttons.buttonPigeonhole.clicked:
+                stopProcess = False
+                threading.Thread(target=PigeonHole, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
 
         if buttons.buttonStop.clicked:
