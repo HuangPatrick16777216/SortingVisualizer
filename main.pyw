@@ -64,6 +64,7 @@ class Buttons:
     sliderSize = Slider((20, 20), (200, 10), valRange=(20, 300), initialVal=100, font=FONT_SMALL, text="Set Size", textCol=WHITE)
     sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 80), initialVal=20, font=FONT_SMALL, text="Speed", textCol=WHITE)
     buttonGenSet = ButtonText((250, 20), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
+    buttonSort = ButtonText((250, 80), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Sort", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     buttonInsertion = ButtonText((500, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
@@ -78,6 +79,7 @@ class Buttons:
         self.sliderSize.Draw(window)
         self.sliderSpeed.Draw(window)
         self.buttonGenSet.Draw(window, events)
+        self.buttonSort.Draw(window, events)
 
         self.buttonInsertion.Draw(window, events)
         self.buttonSelection.Draw(window, events)
@@ -326,32 +328,36 @@ def Main():
         if not processing:
             if buttons.buttonGenSet.clicked:
                 blocks.Generate(buttons.sliderSize.value)
+            elif buttons.buttonSort.clicked:
+                elements = sorted([x[0] for x in blocks.elements])
+                for i in range(len(blocks.elements)):
+                    blocks.elements[i][0] = elements[i]
 
-            if buttons.buttonInsertion.clicked:
+            elif buttons.buttonInsertion.clicked:
                 stopProcess = False
                 threading.Thread(target=Insertion, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
-            if buttons.buttonSelection.clicked:
+            elif buttons.buttonSelection.clicked:
                 stopProcess = False
                 threading.Thread(target=Selection, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
-            if buttons.buttonBubble.clicked:
+            elif buttons.buttonBubble.clicked:
                 stopProcess = False
                 threading.Thread(target=Bubble, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
-            if buttons.buttonCocktail.clicked:
+            elif buttons.buttonCocktail.clicked:
                 stopProcess = False
                 threading.Thread(target=Cocktail, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
-            if buttons.buttonPigeonhole.clicked:
+            elif buttons.buttonPigeonhole.clicked:
                 stopProcess = False
                 threading.Thread(target=PigeonHole, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
-            if buttons.buttonShell.clicked:
+            elif buttons.buttonShell.clicked:
                 stopProcess = False
                 threading.Thread(target=Shell, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
-            if buttons.buttonGnome.clicked:
+            elif buttons.buttonGnome.clicked:
                 stopProcess = False
                 threading.Thread(target=Gnome, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
