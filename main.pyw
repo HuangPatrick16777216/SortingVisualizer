@@ -65,8 +65,9 @@ class Buttons:
     buttonGenSet = ButtonText((250, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
 
     buttonInsertion = ButtonText((500, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
-    buttonSelection = ButtonText((700, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Selection", 1, BLACK), border=3, borderCol=WHITE)
-    buttonBubble = ButtonText((700, 80), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Bubble", 1, BLACK), border=3, borderCol=WHITE)
+    buttonSelection = ButtonText((700, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Selection", 1, BLACK), border=3, borderCol=WHITE)
+    buttonBubble = ButtonText((700, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Bubble", 1, BLACK), border=3, borderCol=WHITE)
+    buttonCocktail = ButtonText((500, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Cocktail", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
@@ -77,6 +78,7 @@ class Buttons:
         self.buttonInsertion.Draw(window, events)
         self.buttonSelection.Draw(window, events)
         self.buttonBubble.Draw(window, events)
+        self.buttonCocktail.Draw(window, events)
         self.buttonStop.Draw(window, events)
             
 
@@ -153,6 +155,51 @@ def Bubble(elements, fpsSlider):
         e[1] = BLUE
     processing = False
 
+def Cocktail(elements, fpsSlider):
+    global processing
+    clock = pygame.time.Clock()
+
+    swapped = True
+    length = len(elements)
+    start = 0
+    end = length - 1
+    while swapped:
+        swapped = False
+        for i in range(start, end):
+            if elements[i] > elements[i+1]:
+                clock.tick(fpsSlider.value)
+                for e in elements:
+                    e[1] = WHITE
+                if stopProcess:
+                    return
+                elements[i], elements[i+1] = elements[i+1], elements[i]
+                elements[i][1] = GREEN
+                elements[i+1][1] = RED
+                swapped = True
+
+        if swapped == False:
+            break
+
+        swapped = False
+        end -= 1
+        for i in range(end-1, start-1, -1):
+            if elements[i] > elements[i+1]:
+                clock.tick(fpsSlider.value)
+                for e in elements:
+                    e[1] = WHITE
+                if stopProcess:
+                    return
+                elements[i], elements[i+1] = elements[i+1], elements[i]
+                elements[i][1] = GREEN
+                elements[i+1][1] = RED
+                swapped = True
+
+        start += 1
+
+    for e in elements:
+        e[1] = BLUE
+    processing = False
+
 
 # Loop
 def Main():
@@ -190,6 +237,10 @@ def Main():
             if buttons.buttonBubble.clicked:
                 stopProcess = False
                 threading.Thread(target=Bubble, args=(blocks.elements, buttons.sliderSpeed)).start()
+                processing = True
+            if buttons.buttonCocktail.clicked:
+                stopProcess = False
+                threading.Thread(target=Cocktail, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
 
         if buttons.buttonStop.clicked:
