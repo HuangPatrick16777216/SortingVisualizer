@@ -15,7 +15,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import sys
+import os
 import pygame
 import random
 import threading
@@ -24,6 +24,7 @@ from pumpkinpy.pygameutils.elements import ButtonText, Slider
 SCREEN = (1600, 900)
 FPS = 24
 processing = None
+elements = []
 
 pygame.init()
 pygame.display.set_caption("Sorting Visualizer")
@@ -43,17 +44,15 @@ class Blocks:
     bigPadding = 50
     smallPadding = 1
 
-    def __init__(self):
-        self.elements = []
-
     def Generate(self, size):
-        self.elements = []
+        global elements
+        elements = []
         for _ in range(size):
-            self.elements.append([random.randint(*self.sizeRange), WHITE])
+            elements.append([random.randint(*self.sizeRange), WHITE])
 
     def Draw(self, window):
-        width = (SCREEN[0] - self.bigPadding*2) / len(self.elements)
-        for i, e in enumerate(self.elements):
+        width = (SCREEN[0] - self.bigPadding*2) / len(elements)
+        for i, e in enumerate(elements):
             size, col = e
             pygame.draw.rect(window, col, ((width*i+self.bigPadding+1)//1, SCREEN[1]-size, width-2, size))
 
@@ -74,34 +73,35 @@ class Buttons:
             
 
 class InsertionSort:
-    def __init__(self, elements):
-        self.elements = elements
+    def __init__(self):
+        global elements
         self.go = False
         threading.Thread(target=self.Start, args=()).start()
 
     def Start(self):
-        global processing
-        for i in range(1, len(self.elements)):
+        global processing, elements
+        for i in range(1, len(elements)):
             while not self.go:
                 continue
 
-            for e in self.elements:
+            for e in elements:
                 e[1] = WHITE
 
-            self.elements[i][1] = GREEN
-            currNum = self.elements[i][0]
+            elements[i][1] = GREEN
+            currNum = elements[i][0]
             j = i - 1
-            while j >= 0 and currNum < self.elements[j][0]:
-                self.elements[j+1][0] = self.elements[j][0]
+            while j >= 0 and currNum < elements[j][0]:
+                elements[j+1][0] = elements[j][0]
                 j -= 1
-            self.elements[j+1][0] = currNum
-            self.elements[j+1][1] = RED
+            elements[j+1][0] = currNum
+            elements[j+1][1] = RED
             self.go = False
 
-        for e in self.elements:
+        for e in elements:
             e[1] = GREEN
 
         processing = None
+        self.go = False
         self.Start()
 
 
@@ -112,7 +112,7 @@ def Main():
     buttons = Buttons()
     blocks.Generate(100)
 
-    sortInsertion = InsertionSort(blocks.elements)
+    sortInsertion = InsertionSort()
     fps = FPS
     while True:
         clock.tick(fps)
@@ -121,7 +121,7 @@ def Main():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()
+                quit()
 
         WINDOW.fill(BLACK)
         blocks.Draw(WINDOW)
