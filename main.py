@@ -61,7 +61,7 @@ class Blocks:
 
 class Buttons:
     sliderSize = Slider((20, 20), (200, 10), valRange=(20, 350), initialVal=100, font=FONT_SMALL, text="Set Size", textCol=WHITE)
-    sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 60), initialVal=20, font=FONT_SMALL, text="Speed", textCol=WHITE)
+    sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 160), initialVal=20, font=FONT_SMALL, text="Speed", textCol=WHITE)
     buttonGenSet = ButtonText((250, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
 
     buttonInsertion = ButtonText((500, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
