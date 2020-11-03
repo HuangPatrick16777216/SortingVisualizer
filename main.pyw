@@ -232,7 +232,8 @@ def PigeonHole(elements, fpsSlider):
             for e in elements:
                 e[1] = WHITE
             elements[i][1] = GREEN
-            elements[i+1][1] = RED
+            if i < len(elements)-1:
+                elements[i+1][1] = RED
             i += 1
 
     for e in elements:
