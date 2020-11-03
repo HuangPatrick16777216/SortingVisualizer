@@ -23,8 +23,6 @@ from pumpkinpy.pygameutils.elements import ButtonText, Slider
 
 SCREEN = (1600, 900)
 FPS = 24
-processing = None
-elements = []
 
 pygame.init()
 pygame.display.set_caption("Sorting Visualizer")
@@ -38,6 +36,8 @@ GREEN = (0, 255, 0)
 FONT_SMALL = pygame.font.SysFont("comicsans", 18)
 FONT_MEDIUM = pygame.font.SysFont("comicsans", 24)
 
+stopProcess = False
+
 
 class Blocks:
     sizeRange = (50, 600)
@@ -45,14 +45,13 @@ class Blocks:
     smallPadding = 1
 
     def Generate(self, size):
-        global elements
-        elements = []
+        self.elements = []
         for _ in range(size):
-            elements.append([random.randint(*self.sizeRange), WHITE])
+            self.elements.append([random.randint(*self.sizeRange), WHITE])
 
     def Draw(self, window):
-        width = (SCREEN[0] - self.bigPadding*2) / len(elements)
-        for i, e in enumerate(elements):
+        width = (SCREEN[0] - self.bigPadding*2) / len(self.elements)
+        for i, e in enumerate(self.elements):
             size, col = e
             pygame.draw.rect(window, col, ((width*i+self.bigPadding+1)//1, SCREEN[1]-size, width-2, size))
 
@@ -63,6 +62,7 @@ class Buttons:
     buttonGenSet = ButtonText((250, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
 
     buttonInsertion =  ButtonText((450, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
+    buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
         self.sliderSize.Draw(window)
@@ -70,52 +70,41 @@ class Buttons:
         self.buttonGenSet.Draw(window, events)
 
         self.buttonInsertion.Draw(window, events)
+        self.buttonStop.Draw(window, events)
             
 
-class InsertionSort:
-    def __init__(self):
-        global elements
-        self.go = False
-        threading.Thread(target=self.Start, args=()).start()
-
-    def Start(self):
-        global processing, elements
-        for i in range(1, len(elements)):
-            while not self.go:
-                continue
-
-            for e in elements:
-                e[1] = WHITE
-
-            elements[i][1] = GREEN
-            currNum = elements[i][0]
-            j = i - 1
-            while j >= 0 and currNum < elements[j][0]:
-                elements[j+1][0] = elements[j][0]
-                j -= 1
-            elements[j+1][0] = currNum
-            elements[j+1][1] = RED
-            self.go = False
-
+def Insertion(elements, fpsSlider):
+    clock = pygame.time.Clock()
+    for i in range(1, len(elements)):
+        clock.tick(fpsSlider.value/2)
         for e in elements:
-            e[1] = GREEN
+            e[1] = WHITE
 
-        processing = None
-        self.go = False
-        self.Start()
+        if stopProcess:
+            return
+
+        elements[i][1] = GREEN
+        currNum = elements[i][0]
+        j = i - 1
+        while j >= 0 and currNum < elements[j][0]:
+            elements[j+1][0] = elements[j][0]
+            j -= 1
+        elements[j+1][0] = currNum
+        elements[j+1][1] = RED
+
+    for e in elements:
+        e[1] = GREEN
 
 
 def Main():
-    global processing
+    global stopProcess
+
     clock = pygame.time.Clock()
     blocks = Blocks()
     buttons = Buttons()
     blocks.Generate(100)
-
-    sortInsertion = InsertionSort()
-    fps = FPS
     while True:
-        clock.tick(fps)
+        clock.tick(FPS)
         pygame.display.update()
         events = pygame.event.get()
         for event in events:
@@ -127,16 +116,15 @@ def Main():
         blocks.Draw(WINDOW)
         buttons.Draw(WINDOW, events)
 
-        fps = buttons.sliderSpeed.value
         if buttons.buttonGenSet.clicked:
             blocks.Generate(buttons.sliderSize.value)
         
-        if processing is None:
-            if buttons.buttonInsertion.clicked:
-                processing = "INSERTION"
+        if buttons.buttonInsertion.clicked:
+            stopProcess = False
+            threading.Thread(target=Insertion, args=(blocks.elements, buttons.sliderSpeed)).start()
 
-        if processing == "INSERTION":
-            sortInsertion.go = True
+        if buttons.buttonStop.clicked:
+            stopProcess = True
 
 
 Main()
