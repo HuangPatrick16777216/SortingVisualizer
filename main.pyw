@@ -312,6 +312,7 @@ def Main():
     buttons = Buttons()
     blocks.Generate(100)
     while True:
+        generate = False
         clock.tick(FPS)
         pygame.display.update()
         events = pygame.event.get()
@@ -319,14 +320,23 @@ def Main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 stopProcess = True
-                quit()
+                return
+            elif event.type == pygame.KEYDOWN:
+                mods = pygame.key.get_mods()
+                ctrl = mods & pygame.KMOD_LCTRL or mods & pygame.KMOD_RCTRL
+                if ctrl and event.key == pygame.K_q:
+                    pygame.quit()
+                    stopProcess = True
+                    return
+                elif ctrl and event.key == pygame.K_n:
+                    generate = True
 
         WINDOW.fill(BLACK)
         blocks.Draw(WINDOW)
         buttons.Draw(WINDOW, events)
         
         if not processing:
-            if buttons.buttonGenSet.clicked:
+            if buttons.buttonGenSet.clicked or generate:
                 blocks.Generate(buttons.sliderSize.value)
             elif buttons.buttonSort.clicked:
                 elements = sorted([x[0] for x in blocks.elements])
