@@ -34,6 +34,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (50, 125, 200)
+CYAN = (125, 200, 255)
 FONT_SMALL = pygame.font.SysFont("comicsans", 18)
 FONT_MEDIUM = pygame.font.SysFont("comicsans", 24)
 
@@ -62,7 +63,8 @@ class Blocks:
 class Buttons:
     sliderSize = Slider((20, 20), (200, 10), valRange=(20, 300), initialVal=100, font=FONT_SMALL, text="Set Size", textCol=WHITE)
     sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 80), initialVal=20, font=FONT_SMALL, text="Speed", textCol=WHITE)
-    buttonGenSet = ButtonText((250, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
+    buttonGenSet = ButtonText((250, 20), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
+    buttonStop = ButtonText((1400, 20), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     buttonInsertion = ButtonText((500, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
     buttonSelection = ButtonText((700, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Selection", 1, BLACK), border=3, borderCol=WHITE)
@@ -71,7 +73,6 @@ class Buttons:
     buttonPigeonhole = ButtonText((900, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Pigeonhole", 1, BLACK), border=3, borderCol=WHITE)
     buttonShell = ButtonText((900, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Shell", 1, BLACK), border=3, borderCol=WHITE)
     buttonGnome = ButtonText((1100, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Gnome", 1, BLACK), border=3, borderCol=WHITE)
-    buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
         self.sliderSize.Draw(window)
@@ -221,16 +222,17 @@ def PigeonHole(elements, fpsSlider):
 
     i = 0
     for count in range(size):
-        clock.tick(fpsSlider.value)
         if stopProcess:
             return
 
         while holes[count] > 0:
+            clock.tick(fpsSlider.value)
             holes[count] -= 1
             elements[i][0] = count + minimum
             for e in elements:
                 e[1] = WHITE
             elements[i][1] = GREEN
+            elements[i+1][1] = RED
             i += 1
 
     for e in elements:
