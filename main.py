@@ -66,6 +66,7 @@ class Buttons:
 
     buttonInsertion = ButtonText((500, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Insertion", 1, BLACK), border=3, borderCol=WHITE)
     buttonSelection = ButtonText((700, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Selection", 1, BLACK), border=3, borderCol=WHITE)
+    buttonBubble = ButtonText((700, 80), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Bubble", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
@@ -75,6 +76,7 @@ class Buttons:
 
         self.buttonInsertion.Draw(window, events)
         self.buttonSelection.Draw(window, events)
+        self.buttonBubble.Draw(window, events)
         self.buttonStop.Draw(window, events)
             
 
@@ -125,6 +127,32 @@ def Selection(elements, fpsSlider):
         e[1] = BLUE
     processing = False
 
+def Bubble(elements, fpsSlider):
+    global processing
+    clock = pygame.time.Clock()
+    while True:
+        solved = True
+        for i in range(len(elements)-1):
+            clock.tick(fpsSlider.value)
+            for e in elements:
+                e[1] = WHITE
+            if stopProcess:
+                return
+            
+            if elements[i] > elements[i+1]:
+                elements[i], elements[i+1] = elements[i+1], elements[i]
+                solved = False
+            
+            elements[i][1] = GREEN
+            elements[i+1][1] = RED
+        
+        if solved:
+            break
+
+    for e in elements:
+        e[1] = BLUE
+    processing = False
+
 
 # Loop
 def Main():
@@ -158,6 +186,10 @@ def Main():
             if buttons.buttonSelection.clicked:
                 stopProcess = False
                 threading.Thread(target=Selection, args=(blocks.elements, buttons.sliderSpeed)).start()
+                processing = True
+            if buttons.buttonBubble.clicked:
+                stopProcess = False
+                threading.Thread(target=Bubble, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
 
         if buttons.buttonStop.clicked:
