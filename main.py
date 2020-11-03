@@ -32,6 +32,7 @@ GRAY = (128, 128, 128)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+BLUE = (50, 125, 200)
 FONT_SMALL = pygame.font.SysFont("comicsans", 18)
 FONT_MEDIUM = pygame.font.SysFont("comicsans", 24)
 
@@ -95,7 +96,7 @@ def Insertion(elements, fpsSlider):
         elements[j+1][1] = RED
 
     for e in elements:
-        e[1] = GREEN
+        e[1] = BLUE
     processing = False
 
 def Selection(elements, fpsSlider):
@@ -118,7 +119,7 @@ def Selection(elements, fpsSlider):
         elements[i][1] = RED
 
     for e in elements:
-        e[1] = GREEN
+        e[1] = BLUE
     processing = False
 
 
