@@ -57,12 +57,13 @@ class Blocks:
         width = (SCREEN[0] - self.bigPadding*2) / len(self.elements)
         for i, e in enumerate(self.elements):
             size, col = e
-            pygame.draw.rect(window, col, ((width*i+self.bigPadding+1)//1, SCREEN[1]-size, width, size))
+            gap = 0 if len(self.elements) > 400 else 1
+            pygame.draw.rect(window, col, ((width*i+self.bigPadding+1)//1, SCREEN[1]-size, width-gap, size))
 
 
 class Buttons:
     sliderSize = Slider((20, 20), (200, 10), valRange=(20, 750), initialVal=100, font=FONT_SMALL, text="Set Size", textCol=WHITE)
-    sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 80), initialVal=15, font=FONT_SMALL, text="Speed", textCol=WHITE)
+    sliderSpeed = Slider((20, 100), (200, 10), valRange=(5, 200), initialVal=15, font=FONT_SMALL, text="Speed", textCol=WHITE)
     buttonGenSet = ButtonText((250, 20), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Generate", 1, BLACK), border=3, borderCol=WHITE)
     buttonSort = ButtonText((250, 80), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Sort", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), CYAN, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
