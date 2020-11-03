@@ -141,11 +141,11 @@ def Main():
         WINDOW.fill(BLACK)
         blocks.Draw(WINDOW)
         buttons.Draw(WINDOW, events)
-
-        if buttons.buttonGenSet.clicked:
-            blocks.Generate(buttons.sliderSize.value)
         
         if not processing:
+            if buttons.buttonGenSet.clicked:
+                blocks.Generate(buttons.sliderSize.value)
+                
             if buttons.buttonInsertion.clicked:
                 stopProcess = False
                 threading.Thread(target=Insertion, args=(blocks.elements, buttons.sliderSpeed)).start()
