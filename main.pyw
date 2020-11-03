@@ -69,6 +69,7 @@ class Buttons:
     buttonBubble = ButtonText((700, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Bubble", 1, BLACK), border=3, borderCol=WHITE)
     buttonCocktail = ButtonText((500, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Cocktail", 1, BLACK), border=3, borderCol=WHITE)
     buttonPigeonhole = ButtonText((900, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Pigeonhole", 1, BLACK), border=3, borderCol=WHITE)
+    buttonShell = ButtonText((900, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Shell", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
@@ -81,6 +82,7 @@ class Buttons:
         self.buttonBubble.Draw(window, events)
         self.buttonCocktail.Draw(window, events)
         self.buttonPigeonhole.Draw(window, events)
+        self.buttonShell.Draw(window, events)
         self.buttonStop.Draw(window, events)
             
 
@@ -233,6 +235,36 @@ def PigeonHole(elements, fpsSlider):
         e[1] = BLUE
     processing = False
 
+def Shell(elements, fpsSlider):
+    global processing
+    clock = pygame.time.Clock()
+
+    length = len(elements)
+    gap = length // 2
+
+    while gap > 0:
+        for i in range(gap, length):
+            clock.tick(fpsSlider.value)
+            for e in elements:
+                e[1] = WHITE
+            if stopProcess:
+                return
+
+            tmp = elements[i][0]
+            elements[i][1] = RED
+            j = i
+            while j >= gap and elements[j-gap][0] > tmp:
+                elements[j][0] = elements[j-gap][0]
+                elements[j][1] = GREEN
+                j -= gap
+
+            elements[j][0] = tmp
+        gap //= 2
+
+    for e in elements:
+        e[1] = BLUE
+    processing = False
+
 
 # Loop
 def Main():
@@ -249,6 +281,7 @@ def Main():
         for event in events:
             if event.type == pygame.QUIT:
                 pygame.quit()
+                stopProcess = True
                 quit()
 
         WINDOW.fill(BLACK)
@@ -278,6 +311,10 @@ def Main():
             if buttons.buttonPigeonhole.clicked:
                 stopProcess = False
                 threading.Thread(target=PigeonHole, args=(blocks.elements, buttons.sliderSpeed)).start()
+                processing = True
+            if buttons.buttonShell.clicked:
+                stopProcess = False
+                threading.Thread(target=Shell, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
 
         if buttons.buttonStop.clicked:
