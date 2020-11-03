@@ -70,6 +70,7 @@ class Buttons:
     buttonCocktail = ButtonText((500, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Cocktail", 1, BLACK), border=3, borderCol=WHITE)
     buttonPigeonhole = ButtonText((900, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Pigeonhole", 1, BLACK), border=3, borderCol=WHITE)
     buttonShell = ButtonText((900, 80), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Shell", 1, BLACK), border=3, borderCol=WHITE)
+    buttonGnome = ButtonText((1100, 20), (160, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Gnome", 1, BLACK), border=3, borderCol=WHITE)
     buttonStop = ButtonText((1400, 20), (150, 35), WHITE, GRAY, BLACK, FONT_MEDIUM.render("Stop", 1, BLACK), border=3, borderCol=WHITE)
 
     def Draw(self, window, events):
@@ -83,6 +84,7 @@ class Buttons:
         self.buttonCocktail.Draw(window, events)
         self.buttonPigeonhole.Draw(window, events)
         self.buttonShell.Draw(window, events)
+        self.buttonGnome.Draw(window, events)
         self.buttonStop.Draw(window, events)
             
 
@@ -265,6 +267,33 @@ def Shell(elements, fpsSlider):
         e[1] = BLUE
     processing = False
 
+def Gnome(elements, fpsSlider):
+    global processing
+    clock = pygame.time.Clock()
+
+    i = 0
+    while i < len(elements):
+        if stopProcess:
+            return
+
+        if i == 0:
+            i += 1
+        if elements[i][0] >= elements[i-1][0]:
+            i += 1
+        else:
+            clock.tick(fpsSlider.value)
+            for e in elements:
+                e[1] = WHITE
+
+            elements[i][0], elements[i-1][0] = elements[i-1][0], elements[i][0]
+            elements[i][1] = GREEN
+            elements[i-1][1] = RED
+            i -= 1
+
+    for e in elements:
+        e[1] = BLUE
+    processing = False
+
 
 # Loop
 def Main():
@@ -315,6 +344,10 @@ def Main():
             if buttons.buttonShell.clicked:
                 stopProcess = False
                 threading.Thread(target=Shell, args=(blocks.elements, buttons.sliderSpeed)).start()
+                processing = True
+            if buttons.buttonGnome.clicked:
+                stopProcess = False
+                threading.Thread(target=Gnome, args=(blocks.elements, buttons.sliderSpeed)).start()
                 processing = True
 
         if buttons.buttonStop.clicked:
