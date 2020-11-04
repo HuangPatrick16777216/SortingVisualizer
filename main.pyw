@@ -15,6 +15,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import time
 import pygame
 import random
 import threading
@@ -40,6 +41,7 @@ FONT_MEDIUM = pygame.font.SysFont("comicsans", 24)
 
 stopProcess = False
 processing = False
+computeTime = 0
 
 
 # Interface
@@ -90,6 +92,19 @@ class Buttons:
         self.buttonShell.Draw(window, events)
         self.buttonGnome.Draw(window, events)
         self.buttonStop.Draw(window, events)
+
+
+def Timer():
+    global computeTime
+
+    while True:
+        while not processing:
+            continue
+        
+        start = time.time()
+        while processing:
+            continue
+        computeTime = round(time.time() - start, 2)
             
 
 # Algorithms
@@ -308,6 +323,7 @@ def Gnome(elements, fpsSlider):
 def Main():
     global stopProcess, processing
 
+    threading.Thread(target=Timer, args=()).start()
     clock = pygame.time.Clock()
     blocks = Blocks()
     buttons = Buttons()
@@ -333,6 +349,7 @@ def Main():
                     generate = True
 
         WINDOW.fill(BLACK)
+        WINDOW.blit(FONT_MEDIUM.render(f"Time: {computeTime}", 1, WHITE), (1400, 80))
         blocks.Draw(WINDOW)
         buttons.Draw(WINDOW, events)
         
