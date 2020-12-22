@@ -94,6 +94,14 @@ class Objects:
                 y_loc = 900 - y_size
                 pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, y_size+5))
 
+        elif mode == "SCATTERPLOT":
+            x_size = 1500 / num_objs
+            for i, obj in enumerate(self.objs):
+                x_loc = 1500 * i / num_objs + 50
+                y_size = 600 * obj + 50
+                y_loc = 900 - y_size
+                pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, 5))
+
 
 def main():
     pygame.init()
@@ -103,7 +111,6 @@ def main():
 
     clock = pygame.time.Clock()
     objects = Objects(100)
-    objects.shuffle()
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -114,7 +121,7 @@ def main():
                 return
 
         WINDOW.fill(BLACK)
-        objects.draw(WINDOW, "BARS")
+        objects.draw(WINDOW, "SCATTERPLOT")
 
 
 main()
