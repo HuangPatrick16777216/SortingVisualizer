@@ -76,7 +76,6 @@ def main():
     WINDOW = pygame.display.set_mode(SCREEN)
 
     clock = pygame.time.Clock()
-    test = Slider((10, 10), (200, 10), 8, pygame.font.SysFont("arial", 14), "asdf", 10, (0, 100))
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -87,7 +86,6 @@ def main():
                 return
 
         WINDOW.fill(BLACK)
-        test.draw(WINDOW, events)
 
 
 main()
