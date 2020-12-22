@@ -40,9 +40,12 @@ class Slider:
         loc = self.loc
         size = self.size
 
+        text = self.font.render(f"{self.label}: {self.value}", 1, WHITE)
+        text_loc = (loc[0] + (self.size[0]-text.get_width())//2, self.loc[1]+self.size[1]+7)
         pygame.draw.rect(window, GRAY, loc+size)
         pygame.draw.rect(window, WHITE, loc+size, 1)
-        pygame.draw.circle(window, WHITE, self.value_to_loc(), self.circle_size)
+        pygame.draw.circle(window, WHITE, (self.value_to_loc(), self.loc[1]+self.size[1]//2), self.circle_size)
+        window.blit(text, text_loc)
 
     def loc_to_value(self):
         fac = max(min((self.loc[0]-self.loc[0]) / self.size[0], 1), 0)
@@ -59,6 +62,7 @@ def main():
     WINDOW = pygame.display.set_mode(SCREEN)
 
     clock = pygame.time.Clock()
+    test = Slider((10, 10), (200, 10), 8, pygame.font.SysFont("arial", 14), "asdf", 10, (0, 100))
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -69,6 +73,7 @@ def main():
                 return
 
         WINDOW.fill(BLACK)
+        test.draw(WINDOW, events)
 
 
 main()
