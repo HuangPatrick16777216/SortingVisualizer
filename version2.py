@@ -35,6 +35,7 @@ class Slider:
         self.value = default_val
         self.range = val_range
         self.val_dist = val_range[1] - val_range[0]
+        self.dragging = False
 
     def draw(self, window, events):
         loc = self.loc
@@ -47,8 +48,21 @@ class Slider:
         pygame.draw.circle(window, WHITE, (self.value_to_loc(), self.loc[1]+self.size[1]//2), self.circle_size)
         window.blit(text, text_loc)
 
-    def loc_to_value(self):
-        fac = max(min((self.loc[0]-self.loc[0]) / self.size[0], 1), 0)
+        mouse_pos = pygame.mouse.get_pos()
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
+                    self.dragging = True
+
+        clicked = pygame.mouse.get_pressed()[0]
+        if not clicked:
+            self.dragging = False
+        
+        if clicked and self.dragging:
+            self.value = self.loc_to_value(mouse_pos[0])
+
+    def loc_to_value(self, loc):
+        fac = max(min((loc-self.loc[0]) / self.size[0], 1), 0)
         return fac*self.val_dist + self.range[0]
 
     def value_to_loc(self):
