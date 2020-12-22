@@ -15,6 +15,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import random
 import pygame
 
 SCREEN = (1600, 900)
@@ -68,6 +69,30 @@ class Slider:
     def value_to_loc(self):
         fac = (self.value-self.range[0]) / self.val_dist
         return fac * self.size[0] + self.loc[0]
+
+
+class Objects:
+    def __init__(self, num_objs):
+        self.gen_objs(num_objs)
+
+    def gen_objs(self, num_objs):
+        self.objs = []
+        for i in range(num_objs):
+            self.objs.append(i / num_objs)
+
+    def shuffle(self):
+        random.shuffle(self.objs)
+
+    def draw(self, window, mode):
+        num_objs = len(self.objs)
+        if mode == "BARS":
+            border = 1 if num_objs < 100 else 0
+            x_size = 1500 / num_objs - border
+            for i, obj in enumerate(self.objs):
+                x_loc = 1500 * i / num_objs + 50
+                y_size = 650 * obj + 50
+                y_loc = 900 - y_size
+                pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, y_size))
 
 
 def main():
