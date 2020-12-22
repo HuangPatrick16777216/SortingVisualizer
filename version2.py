@@ -86,21 +86,24 @@ class Objects:
     def draw(self, window, mode):
         num_objs = len(self.objs)
         if mode == "BARS":
-            border = 1 if num_objs < 100 else 0
+            border = 1 if num_objs < 300 else 0
             x_size = 1500 / num_objs - border
             for i, obj in enumerate(self.objs):
                 x_loc = 1500 * i / num_objs + 50
-                y_size = 650 * obj + 50
+                y_size = 600 * obj + 50
                 y_loc = 900 - y_size
-                pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, y_size))
+                pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, y_size+5))
 
 
 def main():
     pygame.init()
     pygame.display.set_caption("Sorting Visualizer - Version 2")
+    pygame.display.set_icon(pygame.image.load("icon.png"))
     WINDOW = pygame.display.set_mode(SCREEN)
 
     clock = pygame.time.Clock()
+    objects = Objects(100)
+    objects.shuffle()
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -111,6 +114,7 @@ def main():
                 return
 
         WINDOW.fill(BLACK)
+        objects.draw(WINDOW, "BARS")
 
 
 main()
