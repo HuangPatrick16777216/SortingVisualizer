@@ -63,7 +63,7 @@ class Slider:
 
     def loc_to_value(self, loc):
         fac = max(min((loc-self.loc[0]) / self.size[0], 1), 0)
-        return fac*self.val_dist + self.range[0]
+        return int(fac*self.val_dist + self.range[0])
 
     def value_to_loc(self):
         fac = (self.value-self.range[0]) / self.val_dist
