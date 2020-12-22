@@ -21,7 +21,36 @@ SCREEN = (1600, 900)
 FPS = 60
 
 BLACK = (0, 0, 0)
+GRAY = (128, 128, 128)
 WHITE = (255, 255, 255)
+
+
+class Slider:
+    def __init__(self, loc, size, circle_size, font, label, default_val, val_range):
+        self.loc = loc
+        self.size = size
+        self.circle_size = circle_size
+        self.font = font
+        self.label = label
+        self.value = default_val
+        self.range = val_range
+        self.val_dist = val_range[1] - val_range[0]
+
+    def draw(self, window, events):
+        loc = self.loc
+        size = self.size
+
+        pygame.draw.rect(window, GRAY, loc+size)
+        pygame.draw.rect(window, WHITE, loc+size, 1)
+        pygame.draw.circle(window, WHITE, self.value_to_loc(), self.circle_size)
+
+    def loc_to_value(self):
+        fac = max(min((self.loc[0]-self.loc[0]) / self.size[0], 1), 0)
+        return fac*self.val_dist + self.range[0]
+
+    def value_to_loc(self):
+        fac = (self.value-self.range[0]) / self.val_dist
+        return fac * self.size[0] + self.loc[0]
 
 
 def main():
