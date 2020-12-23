@@ -3,6 +3,38 @@
 
 This Python program allows you to visualize different sorting algorithms. You can see how they work, as well as their complexity.
 
+---
+
+## Version 2
+
+Algorithms:
+* Bubble
+* Cocktail Shaker
+* Gnome
+* Insertion
+* Selection
+* Shell
+* Comb
+* Cycle
+
+Visulizations:
+* Bars
+* Scatterplot
+* Black and white
+* Color gradient
+* Pie
+* Pie scatterplot
+* Pie black and white
+* Pie color gradient
+
+Features:
+* Start and stop
+* 10 to 500 elements
+* 10 to 240 ticks per second
+* Sort stats
+
+---
+
 ## Version 1
 Algorithms included:
 * Insertion
