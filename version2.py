@@ -173,6 +173,9 @@ class SortChooser:
                     elif event.button == 5:
                         self.offset -= self.scroll_speed
 
+        self.offset = min(self.offset, 0)
+        self.offset = max(self.offset, size[1] - len(self.choices)*self.choice_width)
+
 
 def main():
     pygame.init()
