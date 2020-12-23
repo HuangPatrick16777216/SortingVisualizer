@@ -32,7 +32,7 @@ WHITE = (255, 255, 255)
 
 CHOICE_LIGHT = (255, 220, 150)
 CHOICE_DARK = (200, 170, 120)
-CHOICE_SELECT = (255, 230, 200)
+CHOICE_SELECT = (190, 230, 180)
 
 
 class Button:
@@ -143,7 +143,13 @@ class Objects:
 class Sorter:
     scroll_speed = 10
     choice_width = 30
-    choices = (("Bubble Sort", "sort_bubble"),)
+    choices = (
+        ("Bubble", "sort_bubble"),
+        ("Cocktail Shaker", "sort_cocktail"),
+        ("Insertion", "sort_insertion"),
+        ("Insertion Binary", "sort_insertion_bin"),
+        ("Selection", "sort_selection"),
+    )
     
     def __init__(self, loc, size, font):
         self.loc = loc
@@ -151,7 +157,7 @@ class Sorter:
         self.font = font
         self.offset = 0
         self.sel_ind = 0
-        self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 25), FONT_SMALL.render("Sort", 1, BLACK))
+        self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 35), FONT_SMALL.render("Sort", 1, BLACK))
 
     def draw(self, window, events):
         loc = self.loc
@@ -210,7 +216,7 @@ def main():
 
         WINDOW.fill(BLACK)
         sorter.draw(WINDOW, events)
-        objects.draw(WINDOW, "SCATTERPLOT")
+        objects.draw(WINDOW, "BARS")
 
 
 main()
