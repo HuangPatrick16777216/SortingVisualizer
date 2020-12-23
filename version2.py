@@ -141,6 +141,9 @@ class Objects:
         self.button_gen_objs.draw(window, events)
         self.button_random.draw(window, events)
         self.slider_speed.draw(window, events)
+        window.blit(FONT_MED.render(f"Accesses: {self.stats_read}", 1, WHITE), (1100, 50))
+        window.blit(FONT_MED.render(f"Comparisons: {self.stats_comp}", 1, WHITE), (1100, 75))
+        window.blit(FONT_MED.render(f"Writes: {self.stats_write}", 1, WHITE), (1100, 100))
 
         num_objs = len(self.objs)
         if mode == "BARS":
