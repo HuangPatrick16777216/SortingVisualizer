@@ -200,6 +200,15 @@ class Objects:
                 x_loc2, y_loc2 = math.cos(angle) * length, math.sin(angle) * length
                 pygame.draw.line(window, self.colors[i], (800+x_loc, 600+y_loc), (800+x_loc2, 600+y_loc2), thickness)
 
+        elif mode == "PIEBW":
+            thickness = 2 if num_objs < 200 else 1
+            length = 300
+            for i, obj in enumerate(self.objs):
+                angle = math.pi * 2 / num_objs * i
+                x_loc, y_loc = math.cos(angle) * length, math.sin(angle) * length
+                color = (255*obj,)*3 if self.colors[i] == WHITE else self.colors[i]
+                pygame.draw.line(window, color, (800, 600), (800+x_loc, 600+y_loc), thickness)
+
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
                 self.gen_objs(self.slider_num_objs.value)
