@@ -396,6 +396,35 @@ class Sorter:
         objects.colors = [BLUE for i in range(num_elements)]
         self.active = False
 
+    def sort_selection(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        for i in range(num_elements):
+            clock.tick(objects.slider_speed.value)
+            if not self.active:
+                return
+
+            min_index = i
+            for j in range(i+1, num_elements):
+                objects.stats_read += 2
+                objects.stats_comp += 1
+                if elements[min_index] > elements[j]:
+                    min_index = j
+
+            elements[i], elements[min_index] = elements[min_index], elements[i]
+
+            objects.colors = [WHITE for i in range(num_elements)]
+            objects.colors[i] = GREEN
+            objects.colors[min_index] = RED
+            objects.stats_read += 2
+            objects.stats_write += 2
+            objects.set_objs(elements)
+        
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
 
 def main():
     pygame.display.set_caption("Sorting Visualizer - Version 2")
