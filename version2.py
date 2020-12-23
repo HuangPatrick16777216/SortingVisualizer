@@ -15,14 +15,13 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import multiprocessing
+import threading
 import random
 import pygame
 pygame.init()
 
 SCREEN = (1600, 900)
 FPS = 60
-PROCESSES = []
 
 FONT_SMALL = pygame.font.SysFont("arial", 12)
 FONT_MED = pygame.font.SysFont("arial", 16)
@@ -138,7 +137,6 @@ class Objects:
         self.stats_write = 0
 
     def draw(self, window, events, mode):
-        print(self.objs)
         self.slider_num_objs.draw(window, events)
         self.button_gen_objs.draw(window, events)
         self.button_random.draw(window, events)
@@ -226,12 +224,9 @@ class Sorter:
         self.offset = max(self.offset, size[1] - len(self.choices)*self.choice_width)
 
         if self.button.clicked(events):
-            global PROCESSES
             objects.reset_stats()
             func = getattr(self, self.choices[self.sel_ind][1])
-            process = multiprocessing.Process(target=func, args=(objects,))
-            process.start()
-            PROCESSES.append(process)
+            threading.Thread(target=func, args=(objects,)).start()
 
     def sort_bubble(self, objects: Objects):
         elements = objects.objs[:]
@@ -256,13 +251,6 @@ class Sorter:
                 objects.set_objs(elements)
 
 
-def end_processes():
-    global PROCESSES
-    for process in PROCESSES:
-        process.terminate()
-    PROCESSES = []
-
-
 def main():
     pygame.display.set_caption("Sorting Visualizer - Version 2")
     pygame.display.set_icon(pygame.image.load("icon.png"))
@@ -277,7 +265,6 @@ def main():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
-                end_processes()
                 pygame.quit()
                 return
 
