@@ -253,9 +253,9 @@ class Sorter:
         while not done:
             done = True
             for i in range(num_elements-1):
+                clock.tick(objects.slider_speed.value)
                 if not self.active:
                     return
-                clock.tick(objects.slider_speed.value)
                 
                 objects.stats_comp += 1
                 objects.stats_read += 2
@@ -266,6 +266,58 @@ class Sorter:
                 if elements[i] > elements[i+1]:
                     done = False
                     elements[i], elements[i+1] = elements[i+1], elements[i]
+
+                    objects.stats_read += 2
+                    objects.stats_write += 2
+                
+                objects.set_objs(elements)
+        
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
+    def sort_cocktail(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        done = False
+        while not done:
+            done = True
+            
+            for i in range(num_elements-1):
+                clock.tick(objects.slider_speed.value)
+                if not self.active:
+                    return
+
+                objects.stats_comp += 1
+                objects.stats_read += 2
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[i] = RED
+                objects.colors[i+1] = GREEN
+
+                if elements[i] > elements[i+1]:
+                    done = False
+                    elements[i], elements[i+1] = elements[i+1], elements[i]
+
+                    objects.stats_read += 2
+                    objects.stats_write += 2
+                
+                objects.set_objs(elements)
+
+            for i in reversed(range(1, num_elements)):
+                clock.tick(objects.slider_speed.value)
+                if not self.active:
+                    return
+
+                objects.stats_comp += 1
+                objects.stats_read += 2
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[i] = RED
+                objects.colors[i-1] = GREEN
+
+                if elements[i] < elements[i-1]:
+                    done = False
+                    elements[i], elements[i-1] = elements[i-1], elements[i]
 
                     objects.stats_read += 2
                     objects.stats_write += 2
