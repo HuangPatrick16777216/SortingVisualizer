@@ -242,6 +242,7 @@ class Sorter:
         ("Gnome", "sort_gnome"),
         ("Insertion", "sort_insertion"),
         ("Selection", "sort_selection"),
+        ("Shell", "sort_shell")
     )
     
     def __init__(self, loc, size, font):
@@ -473,6 +474,46 @@ class Sorter:
             objects.stats_read += 2
             objects.stats_write += 2
             objects.set_objs(elements)
+        
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
+    def sort_shell(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        gap = num_elements // 2
+        while gap > 0:
+            for i in range(gap, num_elements):
+                clock.tick(objects.slider_speed.value)
+                if not self.active:
+                    return
+
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[i] = RED
+                
+                objects.stats_read += 1
+                tmp = elements[i]
+                j = i
+                while j >= gap and elements[j-gap] > tmp:
+                    clock.tick(objects.slider_speed.value)
+                    if not self.active:
+                        return
+
+                    elements[j] = elements[j-gap]
+                    j -= gap
+
+                    objects.set_objs(elements)
+                    objects.stats_write += 1
+                    objects.stats_read += 2
+                    objects.stats_comp += 2
+                    objects.colors = [WHITE for i in range(num_elements)]
+                    objects.colors[j] = RED
+                    objects.colors[j-gap] = GREEN
+                
+                elements[j] = tmp
+            gap //= 2
         
         objects.colors = [BLUE for i in range(num_elements)]
         self.active = False
