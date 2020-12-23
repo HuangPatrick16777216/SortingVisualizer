@@ -15,12 +15,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import multiprocessing
 import random
 import pygame
 pygame.init()
 
 SCREEN = (1600, 900)
 FPS = 60
+PROCESSES = []
 
 FONT_SMALL = pygame.font.SysFont("arial", 12)
 FONT_MED = pygame.font.SysFont("arial", 16)
@@ -115,6 +117,7 @@ class Objects:
     button_random = Button((1400, 150), (125, 40), FONT_MED.render("Randomize", 1, BLACK))
 
     def __init__(self, num_objs):
+        self.reset_stats()
         self.gen_objs(num_objs)
 
     def gen_objs(self, num_objs):
@@ -124,6 +127,11 @@ class Objects:
 
     def shuffle(self):
         random.shuffle(self.objs)
+
+    def reset_stats(self):
+        self.stats_comp = 0
+        self.stats_read = 0
+        self.stats_write = 0
 
     def draw(self, window, events, mode):
         self.slider_num_objs.draw(window, events)
@@ -174,7 +182,7 @@ class Sorter:
         self.sel_ind = 0
         self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 35), FONT_MED.render("Sort", 1, BLACK))
 
-    def draw(self, window, events):
+    def draw(self, window, events, objects: Objects):
         loc = self.loc
         size = self.size
         surface = pygame.Surface(self.size)
@@ -211,6 +219,43 @@ class Sorter:
         self.offset = min(self.offset, 0)
         self.offset = max(self.offset, size[1] - len(self.choices)*self.choice_width)
 
+        if self.button.clicked(events):
+            global PROCESSES
+            objects.reset_stats()
+            func = getattr(self, self.choices[self.sel_ind][1])
+            process = multiprocessing.Process(target=func, args=(objects,))
+            process.start()
+            PROCESSES.append(process)
+
+    def sort_bubble(self, objects: Objects):
+        elements = objects.objs
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        done = False
+        while not done:
+            done = True
+            for i in range(num_elements-1):
+                clock.tick(objects.slider_speed.value)
+                objects.stats_comp += 1
+                objects.stats_read += 2
+
+                if elements[i] > elements[i+1]:
+                    done = False
+                    elements[i], elements[i+1] = elements[i+1], elements[i]
+
+                    objects.stats_read += 2
+                    objects.stats_write += 2
+                
+                objects.set_objs(elements)
+
+
+def end_processes():
+    global PROCESSES
+    for process in PROCESSES:
+        process.terminate()
+    PROCESSES = []
+
 
 def main():
     pygame.display.set_caption("Sorting Visualizer - Version 2")
@@ -226,11 +271,12 @@ def main():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
+                end_processes()
                 pygame.quit()
                 return
 
         WINDOW.fill(BLACK)
-        sorter.draw(WINDOW, events)
+        sorter.draw(WINDOW, events, objects)
         objects.draw(WINDOW, events, "BARS")
 
 
