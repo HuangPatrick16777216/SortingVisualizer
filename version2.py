@@ -18,6 +18,7 @@
 import math
 import time
 import threading
+import colorsys
 import random
 import pygame
 pygame.init()
@@ -120,7 +121,7 @@ class Objects:
     slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 500))
     button_gen_objs = Button((1400, 100), (125, 40), FONT_MED.render("Generate", 1, BLACK))
     button_random = Button((1400, 150), (125, 40), FONT_MED.render("Randomize", 1, BLACK))
-    slider_speed = Slider((1350, 210), (225, 10), 7, FONT_SMALL, "Speed", 30, (10, 120))
+    slider_speed = Slider((1350, 210), (225, 10), 7, FONT_SMALL, "Speed", 30, (10, 240))
 
     def __init__(self, num_objs):
         self.reset_stats()
@@ -183,6 +184,16 @@ class Objects:
                 if self.colors[i] != WHITE:
                     pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), border+1)
 
+        elif mode == "COLOR":
+            border = 1 if num_objs < 200 else 0
+            x_size = 1500 / num_objs
+            for i, obj in enumerate(self.objs):
+                x_loc = 1500 * i / num_objs + 50
+                color = [255*x for x in colorsys.hsv_to_rgb(obj, 0.8, 0.8)]
+                pygame.draw.rect(window, color, (x_loc, 350, x_size, 550))
+                if self.colors[i] != WHITE:
+                    pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), border+1)
+
         elif mode == "PIE":
             thickness = 2 if num_objs < 200 else 1
             for i, obj in enumerate(self.objs):
@@ -224,6 +235,7 @@ class ObjAppearance:
         ("Bars", "BARS"),
         ("Scatterplot", "SCATTERPLOT"),
         ("Black & White", "BW"),
+        ("Color Gradient", "COLOR"),
         ("Pie", "PIE"),
         ("Pie Scatter", "PIESCATTER"),
         ("Pie BW", "PIEBW"),
