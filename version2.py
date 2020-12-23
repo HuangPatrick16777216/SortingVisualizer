@@ -140,7 +140,7 @@ class Objects:
 class SortChooser:
     scroll_speed = 10
     choice_width = 20
-    choices = ("asdf", "bsdf", "csdf", "dsdf", "esdf", "fsdf", "gsdf")
+    choices = ()
     
     def __init__(self, loc, size, font):
         self.loc = loc
