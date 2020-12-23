@@ -114,7 +114,7 @@ class Objects:
     slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 500))
     button_gen_objs = Button((1400, 100), (125, 40), FONT_MED.render("Generate", 1, BLACK))
     button_random = Button((1400, 150), (125, 40), FONT_MED.render("Randomize", 1, BLACK))
-    slider_speed = Slider((1350, 200), (225, 10), 7, FONT_SMALL, "Speed", 30, (10, 120))
+    slider_speed = Slider((1350, 210), (225, 10), 7, FONT_SMALL, "Speed", 30, (10, 120))
 
     def __init__(self, num_objs):
         self.reset_stats()
@@ -136,7 +136,7 @@ class Objects:
         self.stats_read = 0
         self.stats_write = 0
 
-    def draw(self, window, events, mode):
+    def draw(self, window, events, mode, sorter):
         self.slider_num_objs.draw(window, events)
         self.button_gen_objs.draw(window, events)
         self.button_random.draw(window, events)
@@ -163,11 +163,12 @@ class Objects:
                 y_loc = 900 - y_size
                 pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, 5))
 
-        if self.button_gen_objs.clicked(events):
-            self.gen_objs(self.slider_num_objs.value)
-        if self.button_random.clicked(events):
-            self.gen_objs(self.slider_num_objs.value)
-            self.shuffle()
+        if not sorter.active:
+            if self.button_gen_objs.clicked(events):
+                self.gen_objs(self.slider_num_objs.value)
+            if self.button_random.clicked(events):
+                self.gen_objs(self.slider_num_objs.value)
+                self.shuffle()
 
 
 class Sorter:
@@ -188,6 +189,8 @@ class Sorter:
         self.offset = 0
         self.sel_ind = 0
         self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 35), FONT_MED.render("Sort", 1, BLACK))
+        self.button_stop = Button((loc[0]+size[0]+20, loc[1]+50), (100, 35), FONT_MED.render("Stop", 1, BLACK))
+        self.active = False
 
     def draw(self, window, events, objects: Objects):
         loc = self.loc
@@ -208,6 +211,7 @@ class Sorter:
         window.blit(surface, self.loc)
         pygame.draw.rect(window, WHITE, self.loc+self.size, 2)
         self.button.draw(window, events)
+        self.button_stop.draw(window, events)
 
         mouse_pos = pygame.mouse.get_pos()
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
@@ -226,10 +230,13 @@ class Sorter:
         self.offset = min(self.offset, 0)
         self.offset = max(self.offset, size[1] - len(self.choices)*self.choice_width)
 
-        if self.button.clicked(events):
+        if self.button.clicked(events) and not self.active:
             objects.reset_stats()
             func = getattr(self, self.choices[self.sel_ind][1])
+            self.active = True
             threading.Thread(target=func, args=(objects,)).start()
+        if self.button_stop.clicked(events):
+            self.active = False
 
     def sort_bubble(self, objects: Objects):
         elements = objects.objs[:]
@@ -240,6 +247,8 @@ class Sorter:
         while not done:
             done = True
             for i in range(num_elements-1):
+                if not self.active:
+                    return
                 clock.tick(objects.slider_speed.value)
                 objects.stats_comp += 1
                 objects.stats_read += 2
@@ -252,6 +261,8 @@ class Sorter:
                     objects.stats_write += 2
                 
                 objects.set_objs(elements)
+        
+        self.active = False
 
 
 def main():
@@ -268,12 +279,13 @@ def main():
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
+                sorter.active = False
                 pygame.quit()
                 return
 
         WINDOW.fill(BLACK)
         sorter.draw(WINDOW, events, objects)
-        objects.draw(WINDOW, events, "BARS")
+        objects.draw(WINDOW, events, "BARS", sorter)
 
 
 main()
