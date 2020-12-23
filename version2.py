@@ -182,6 +182,15 @@ class Objects:
                 x_loc, y_loc = math.cos(angle) * length, math.sin(angle) * length
                 pygame.draw.line(window, self.colors[i], (800, 600), (800+x_loc, 600+y_loc), thickness)
 
+        elif mode == "BW":
+            border = 1 if num_objs < 200 else 0
+            x_size = 1500 / num_objs
+            for i, obj in enumerate(self.objs):
+                x_loc = 1500 * i / num_objs + 50
+                pygame.draw.rect(window, (255*obj,)*3, (x_loc, 350, x_size, 550))
+                if self.colors[i] != WHITE:
+                    pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), border+1)
+
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
                 self.gen_objs(self.slider_num_objs.value)
@@ -196,7 +205,8 @@ class ObjAppearance:
     choices = (
         ("Bars", "BARS"),
         ("Scatterplot", "SCATTERPLOT"),
-        ("Pie", "PIE")
+        ("Pie", "PIE"),
+        ("Black & White", "BW")
     )
 
     def __init__(self, loc, size, font):
