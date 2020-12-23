@@ -171,7 +171,7 @@ class Objects:
                 x_loc = 1500 * i / num_objs + 50
                 y_size = 500 * obj + 50
                 y_loc = 900 - y_size
-                pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, 5))
+                pygame.draw.rect(window, self.colors[i], (x_loc, y_loc, x_size, 5))
 
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
