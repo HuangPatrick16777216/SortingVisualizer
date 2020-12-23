@@ -27,6 +27,9 @@ GRAY = (128, 128, 128)
 GRAY_LIGHT = (192, 192, 192)
 WHITE = (255, 255, 255)
 
+CHOICE_LIGHT = (255, 220, 150)
+CHOICE_DARK = (200, 170, 120)
+
 
 class Button:
     def __init__(self, loc, size, text):
@@ -133,6 +136,33 @@ class Objects:
                 pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, 5))
 
 
+class SortChooser:
+    scroll_speed = 10
+    choice_width = 20
+    choices = ("asdf", "bsdf", "csdf", "dsdf", "esdf", "fsdf", "gsdf")
+    
+    def __init__(self, loc, size, font):
+        self.loc = loc
+        self.size = size
+        self.font = font
+        self.offset = 0
+
+    def draw(self, window):
+        size = self.size
+        surface = pygame.Surface(self.size)
+
+        for i, choice in enumerate(self.choices):
+            y_loc = self.choice_width*i + self.offset
+            color = CHOICE_LIGHT if i%2 == 0 else CHOICE_DARK
+
+            pygame.draw.rect(surface, color, (0, y_loc, size[0], self.choice_width))
+            text = self.font.render(choice, 1, BLACK)
+            text_loc = ((size[0]-text.get_width()) // 2, y_loc + (self.choice_width-text.get_height())//2)
+            surface.blit(text, text_loc)
+
+        window.blit(surface, self.loc)
+
+
 def main():
     pygame.init()
     pygame.display.set_caption("Sorting Visualizer - Version 2")
@@ -141,6 +171,7 @@ def main():
 
     clock = pygame.time.Clock()
     objects = Objects(100)
+    asdf = SortChooser((100, 100), (150, 110), pygame.font.SysFont("arial", 14))
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -152,6 +183,7 @@ def main():
 
         WINDOW.fill(BLACK)
         objects.draw(WINDOW, "SCATTERPLOT")
+        asdf.draw(WINDOW)
 
 
 main()
