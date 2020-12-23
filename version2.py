@@ -33,9 +33,9 @@ GRAY = (128, 128, 128)
 GRAY_LIGHT = (192, 192, 192)
 WHITE = (255, 255, 255)
 
-RED = (220, 100, 100)
-GREEN = (100, 220, 100)
-BLUE = (100, 100, 220)
+RED = (255, 150, 150)
+GREEN = (150, 255, 150)
+BLUE = (150, 150, 255)
 
 CHOICE_LIGHT = (255, 220, 150)
 CHOICE_DARK = (200, 170, 120)
@@ -152,7 +152,7 @@ class Objects:
         window.blit(FONT_MED.render(f"Comparisons: {self.stats_comp}", 1, WHITE), (1100, 75))
         window.blit(FONT_MED.render(f"Writes: {self.stats_write}", 1, WHITE), (1100, 100))
         window.blit(FONT_MED.render(
-            f"Est. Time: {int((0.000167*self.stats_write + 0.000145*self.stats_read + 0.000225*self.stats_comp) * 1000) / 1000} ms",
+            f"Est. Time: {int(0.0167*self.stats_write + 0.0145*self.stats_read + 0.0225*self.stats_comp) / 1000} ms",
             1, WHITE), (1100, 125))
 
         num_objs = len(self.objs)
@@ -189,7 +189,6 @@ class Sorter:
         ("Cocktail Shaker", "sort_cocktail"),
         ("Gnome", "sort_gnome"),
         ("Insertion", "sort_insertion"),
-        ("Insertion Binary", "sort_insertion_bin"),
         ("Selection", "sort_selection"),
     )
     
@@ -362,6 +361,36 @@ class Sorter:
                 elements[i], elements[i-1] = elements[i-1], elements[i]
                 i -= 1
 
+            objects.set_objs(elements)
+        
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
+    def sort_insertion(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        for i in range(1, num_elements):
+            clock.tick(objects.slider_speed.value)
+            if not self.active:
+                return
+
+            key = elements[i]
+            j = i - 1
+            while j >= 0 and key < elements[j]:
+                objects.stats_read += 2
+                objects.stats_write += 1
+                objects.stats_comp += 1
+                elements[j+1] = elements[j]
+                j -= 1
+            elements[j+1] = key
+
+            objects.colors = [WHITE for i in range(num_elements)]
+            objects.colors[i] = GREEN
+            objects.stats_read += 1
+            objects.stats_write += 1
+            objects.colors[j+1] = RED
             objects.set_objs(elements)
         
         objects.colors = [BLUE for i in range(num_elements)]
