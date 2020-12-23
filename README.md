@@ -1,7 +1,9 @@
-# SortingVisualizer
+# Sorting Visualizer
 ### by Patrick Huang
 
 This Python program allows you to visualize different sorting algorithms. You can see how they work, as well as their complexity.
+
+## Version 1
 Algorithms included:
 * Insertion
 * Cocktail
