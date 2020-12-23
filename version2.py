@@ -174,14 +174,6 @@ class Objects:
                 y_loc = 900 - y_size
                 pygame.draw.rect(window, self.colors[i], (x_loc, y_loc, x_size, 5))
 
-        elif mode == "PIE":
-            thickness = 2 if num_objs < 200 else 1
-            for i, obj in enumerate(self.objs):
-                angle = math.pi * 2 / num_objs * i
-                length = obj * 250 + 50
-                x_loc, y_loc = math.cos(angle) * length, math.sin(angle) * length
-                pygame.draw.line(window, self.colors[i], (800, 600), (800+x_loc, 600+y_loc), thickness)
-
         elif mode == "BW":
             border = 1 if num_objs < 200 else 0
             x_size = 1500 / num_objs
@@ -190,6 +182,23 @@ class Objects:
                 pygame.draw.rect(window, (255*obj,)*3, (x_loc, 350, x_size, 550))
                 if self.colors[i] != WHITE:
                     pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), border+1)
+
+        elif mode == "PIE":
+            thickness = 2 if num_objs < 200 else 1
+            for i, obj in enumerate(self.objs):
+                angle = math.pi * 2 / num_objs * i
+                length = obj * 250 + 50
+                x_loc, y_loc = math.cos(angle) * length, math.sin(angle) * length
+                pygame.draw.line(window, self.colors[i], (800, 600), (800+x_loc, 600+y_loc), thickness)
+
+        elif mode == "PIESCATTER":
+            thickness = 2 if num_objs < 200 else 1
+            for i, obj in enumerate(self.objs):
+                angle = math.pi * 2 / num_objs * i
+                length = obj * 250 + 50
+                x_loc, y_loc = math.cos(angle) * (length-5), math.sin(angle) * (length-5)
+                x_loc2, y_loc2 = math.cos(angle) * length, math.sin(angle) * length
+                pygame.draw.line(window, self.colors[i], (800+x_loc, 600+y_loc), (800+x_loc2, 600+y_loc2), thickness)
 
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
@@ -205,8 +214,10 @@ class ObjAppearance:
     choices = (
         ("Bars", "BARS"),
         ("Scatterplot", "SCATTERPLOT"),
+        ("Black & White", "BW"),
         ("Pie", "PIE"),
-        ("Black & White", "BW")
+        ("Pie Scatter", "PIESCATTER"),
+        ("Pie BW", "PIEBW"),
     )
 
     def __init__(self, loc, size, font):
