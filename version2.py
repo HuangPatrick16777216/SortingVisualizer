@@ -22,8 +22,38 @@ SCREEN = (1600, 900)
 FPS = 60
 
 BLACK = (0, 0, 0)
+GRAY_DARK = (64, 64, 64)
 GRAY = (128, 128, 128)
+GRAY_LIGHT = (192, 192, 192)
 WHITE = (255, 255, 255)
+
+
+class Button:
+    def __init__(self, loc, size, text):
+        self.loc = loc
+        self.size = size
+        self.text = text
+        self.text_loc = (loc[0] + (size[0]-text.get_width())//2, loc[1] + (size[1]-text.get_height())//2)
+
+    def draw(self, window, events):
+        color = (GRAY_DARK if self.clicked(events) else GRAY_LIGHT) if self.hovered() else WHITE
+        pygame.draw.rect(window, color, self.loc+self.size)
+        pygame.draw.rect(window, WHITE, self.loc+self.size, 2)
+        window.blit(self.text, self.text_loc)
+
+    def hovered(self):
+        loc = self.loc
+        size = self.size
+        mouse_pos = pygame.mouse.get_pos()
+        if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
+            return True
+        return False
+
+    def clicked(self, events):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and self.hovered():
+                return True
+        return False
 
 
 class Slider:
