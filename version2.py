@@ -169,7 +169,7 @@ class Objects:
             x_size = 1500 / num_objs
             for i, obj in enumerate(self.objs):
                 x_loc = 1500 * i / num_objs + 50
-                y_size = 600 * obj + 50
+                y_size = 500 * obj + 50
                 y_loc = 900 - y_size
                 pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, 5))
 
@@ -179,6 +179,58 @@ class Objects:
             if self.button_random.clicked(events):
                 self.gen_objs(self.slider_num_objs.value)
                 self.shuffle()
+
+
+class ObjAppearance:
+    scroll_speed = 10
+    choice_width = 30
+    choices = (
+        ("Bars", "BARS"),
+        ("Scatterplot", "SCATTERPLOT")
+    )
+
+    def __init__(self, loc, size, font):
+        self.loc = loc
+        self.size = size
+        self.font = font
+        self.offset = 0
+        self.sel_ind = 0
+
+    def draw(self, window, events):
+        loc = self.loc
+        size = self.size
+        surface = pygame.Surface(self.size)
+
+        for i, choice in enumerate(self.choices):
+            y_loc = self.choice_width*i + self.offset
+            color = CHOICE_LIGHT if i%2 == 0 else CHOICE_DARK
+            if i == self.sel_ind:
+                color = CHOICE_SELECT
+
+            pygame.draw.rect(surface, color, (0, y_loc, size[0], self.choice_width))
+            text = self.font.render(choice[0], 1, BLACK)
+            text_loc = ((size[0]-text.get_width()) // 2, y_loc + (self.choice_width-text.get_height())//2)
+            surface.blit(text, text_loc)
+
+        window.blit(surface, self.loc)
+        pygame.draw.rect(window, WHITE, self.loc+self.size, 2)
+
+        mouse_pos = pygame.mouse.get_pos()
+        if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        index = (mouse_pos[1]-loc[1]-self.offset) // self.choice_width
+                        if 0 <= index < len(self.choices):
+                            self.sel_ind = index
+
+                    elif event.button == 4:
+                        self.offset += self.scroll_speed
+                    elif event.button == 5:
+                        self.offset -= self.scroll_speed
+
+        self.offset = min(self.offset, 0)
+        self.offset = max(self.offset, size[1] - len(self.choices)*self.choice_width)
 
 
 class Sorter:
@@ -434,6 +486,7 @@ def main():
     clock = pygame.time.Clock()
     objects = Objects(50)
     sorter = Sorter((50, 50), (150, 200), FONT_MED)
+    appear = ObjAppearance((700, 50), (150, 200), FONT_MED)
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -446,7 +499,8 @@ def main():
 
         WINDOW.fill(BLACK)
         sorter.draw(WINDOW, events, objects)
-        objects.draw(WINDOW, events, "BARS", sorter)
+        objects.draw(WINDOW, events, appear.choices[appear.sel_ind][1], sorter)
+        appear.draw(WINDOW, events)
 
 
 main()
