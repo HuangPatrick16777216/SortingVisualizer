@@ -22,7 +22,8 @@ pygame.init()
 SCREEN = (1600, 900)
 FPS = 60
 
-FONT_SMALL = pygame.font.SysFont("arial", 16)
+FONT_SMALL = pygame.font.SysFont("arial", 12)
+FONT_MED = pygame.font.SysFont("arial", 16)
 
 BLACK = (0, 0, 0)
 GRAY_DARK = (64, 64, 64)
@@ -109,6 +110,10 @@ class Slider:
 
 
 class Objects:
+    slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 500))
+    button_gen_objs = Button((1400, 100), (125, 40), FONT_MED.render("Generate", 1, BLACK))
+    button_random = Button((1400, 150), (125, 40), FONT_MED.render("Randomize", 1, BLACK))
+
     def __init__(self, num_objs):
         self.gen_objs(num_objs)
 
@@ -120,14 +125,18 @@ class Objects:
     def shuffle(self):
         random.shuffle(self.objs)
 
-    def draw(self, window, mode):
+    def draw(self, window, events, mode):
+        self.slider_num_objs.draw(window, events)
+        self.button_gen_objs.draw(window, events)
+        self.button_random.draw(window, events)
+
         num_objs = len(self.objs)
         if mode == "BARS":
             border = 1 if num_objs < 300 else 0
             x_size = 1500 / num_objs - border
             for i, obj in enumerate(self.objs):
                 x_loc = 1500 * i / num_objs + 50
-                y_size = 600 * obj + 50
+                y_size = 500 * obj + 50
                 y_loc = 900 - y_size
                 pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, y_size+5))
 
@@ -138,6 +147,12 @@ class Objects:
                 y_size = 600 * obj + 50
                 y_loc = 900 - y_size
                 pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, 5))
+
+        if self.button_gen_objs.clicked(events):
+            self.gen_objs(self.slider_num_objs.value)
+        if self.button_random.clicked(events):
+            self.gen_objs(self.slider_num_objs.value)
+            self.shuffle()
 
 
 class Sorter:
@@ -157,7 +172,7 @@ class Sorter:
         self.font = font
         self.offset = 0
         self.sel_ind = 0
-        self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 35), FONT_SMALL.render("Sort", 1, BLACK))
+        self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 35), FONT_MED.render("Sort", 1, BLACK))
 
     def draw(self, window, events):
         loc = self.loc
@@ -203,8 +218,8 @@ def main():
     WINDOW = pygame.display.set_mode(SCREEN)
 
     clock = pygame.time.Clock()
-    objects = Objects(100)
-    sorter = Sorter((50, 50), (150, 200), FONT_SMALL)
+    objects = Objects(50)
+    sorter = Sorter((50, 50), (150, 200), FONT_MED)
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -216,7 +231,7 @@ def main():
 
         WINDOW.fill(BLACK)
         sorter.draw(WINDOW, events)
-        objects.draw(WINDOW, "BARS")
+        objects.draw(WINDOW, events, "BARS")
 
 
 main()
