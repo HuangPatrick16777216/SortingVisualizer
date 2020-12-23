@@ -29,6 +29,7 @@ WHITE = (255, 255, 255)
 
 CHOICE_LIGHT = (255, 220, 150)
 CHOICE_DARK = (200, 170, 120)
+CHOICE_SELECT = (255, 230, 200)
 
 
 class Button:
@@ -146,6 +147,7 @@ class SortChooser:
         self.size = size
         self.font = font
         self.offset = 0
+        self.sel_ind = 0
 
     def draw(self, window, events):
         loc = self.loc
@@ -155,6 +157,8 @@ class SortChooser:
         for i, choice in enumerate(self.choices):
             y_loc = self.choice_width*i + self.offset
             color = CHOICE_LIGHT if i%2 == 0 else CHOICE_DARK
+            if i == self.sel_ind:
+                color = CHOICE_SELECT
 
             pygame.draw.rect(surface, color, (0, y_loc, size[0], self.choice_width))
             text = self.font.render(choice, 1, BLACK)
@@ -168,7 +172,12 @@ class SortChooser:
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
             for event in events:
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 4:
+                    if event.button == 1:
+                        index = (mouse_pos[1]-loc[1]-self.offset) // self.choice_width
+                        if 0 <= index < len(self.choices):
+                            self.sel_ind = index
+
+                    elif event.button == 4:
                         self.offset += self.scroll_speed
                     elif event.button == 5:
                         self.offset -= self.scroll_speed
@@ -185,7 +194,6 @@ def main():
 
     clock = pygame.time.Clock()
     objects = Objects(100)
-    asdf = SortChooser((100, 100), (150, 110), pygame.font.SysFont("arial", 14))
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -197,7 +205,6 @@ def main():
 
         WINDOW.fill(BLACK)
         objects.draw(WINDOW, "SCATTERPLOT")
-        asdf.draw(WINDOW, events)
 
 
 main()
