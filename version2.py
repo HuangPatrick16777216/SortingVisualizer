@@ -32,6 +32,10 @@ GRAY = (128, 128, 128)
 GRAY_LIGHT = (192, 192, 192)
 WHITE = (255, 255, 255)
 
+RED = (220, 100, 100)
+GREEN = (100, 220, 100)
+BLUE = (100, 100, 220)
+
 CHOICE_LIGHT = (255, 220, 150)
 CHOICE_DARK = (200, 170, 120)
 CHOICE_SELECT = (190, 230, 180)
@@ -122,8 +126,10 @@ class Objects:
 
     def gen_objs(self, num_objs):
         self.objs = []
+        self.colors = []
         for i in range(num_objs):
             self.objs.append(i / num_objs)
+            self.colors.append(WHITE)
 
     def set_objs(self, objs):
         self.objs = objs[:]
@@ -153,7 +159,7 @@ class Objects:
                 x_loc = 1500 * i / num_objs + 50
                 y_size = 500 * obj + 50
                 y_loc = 900 - y_size
-                pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, y_size+5))
+                pygame.draw.rect(window, self.colors[i], (x_loc, y_loc, x_size, y_size+5))
 
         elif mode == "SCATTERPLOT":
             x_size = 1500 / num_objs
@@ -250,8 +256,12 @@ class Sorter:
                 if not self.active:
                     return
                 clock.tick(objects.slider_speed.value)
+                
                 objects.stats_comp += 1
                 objects.stats_read += 2
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[i] = RED
+                objects.colors[i+1] = GREEN
 
                 if elements[i] > elements[i+1]:
                     done = False
@@ -262,6 +272,7 @@ class Sorter:
                 
                 objects.set_objs(elements)
         
+        objects.colors = [BLUE for i in range(num_elements)]
         self.active = False
 
 
