@@ -183,6 +183,7 @@ class Sorter:
     choices = (
         ("Bubble", "sort_bubble"),
         ("Cocktail Shaker", "sort_cocktail"),
+        ("Gnome", "sort_gnome"),
         ("Insertion", "sort_insertion"),
         ("Insertion Binary", "sort_insertion_bin"),
         ("Selection", "sort_selection"),
@@ -323,6 +324,39 @@ class Sorter:
                     objects.stats_write += 2
                 
                 objects.set_objs(elements)
+        
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
+    def sort_gnome(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        i = 0
+        while i < num_elements:
+            clock.tick(objects.slider_speed.value)
+            if not self.active:
+                return
+
+            objects.colors = [WHITE for i in range(num_elements)]
+            objects.colors[i] = GREEN
+            if i > 0:
+                objects.colors[i-1] = RED
+            objects.stats_read += 2
+            objects.stats_comp += 1
+
+            if i == 0:
+                i += 1
+            if elements[i] >= elements[i-1]:
+                i += 1
+            else:
+                objects.stats_read += 2
+                objects.stats_write += 2
+                elements[i], elements[i-1] = elements[i-1], elements[i]
+                i -= 1
+
+            objects.set_objs(elements)
         
         objects.colors = [BLUE for i in range(num_elements)]
         self.active = False
