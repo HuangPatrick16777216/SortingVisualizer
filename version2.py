@@ -15,6 +15,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import time
 import threading
 import random
 import pygame
@@ -150,6 +151,9 @@ class Objects:
         window.blit(FONT_MED.render(f"Accesses: {self.stats_read}", 1, WHITE), (1100, 50))
         window.blit(FONT_MED.render(f"Comparisons: {self.stats_comp}", 1, WHITE), (1100, 75))
         window.blit(FONT_MED.render(f"Writes: {self.stats_write}", 1, WHITE), (1100, 100))
+        window.blit(FONT_MED.render(
+            f"Est. Time: {int((0.000167*self.stats_write + 0.000145*self.stats_read + 0.000225*self.stats_comp) * 1000) / 1000} ms",
+            1, WHITE), (1100, 125))
 
         num_objs = len(self.objs)
         if mode == "BARS":
@@ -198,6 +202,7 @@ class Sorter:
         self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 35), FONT_MED.render("Sort", 1, BLACK))
         self.button_stop = Button((loc[0]+size[0]+20, loc[1]+50), (100, 35), FONT_MED.render("Stop", 1, BLACK))
         self.active = False
+        self.time_start = 0
 
     def draw(self, window, events, objects: Objects):
         loc = self.loc
@@ -241,6 +246,7 @@ class Sorter:
             objects.reset_stats()
             func = getattr(self, self.choices[self.sel_ind][1])
             self.active = True
+            self.time_start = time.time()
             threading.Thread(target=func, args=(objects,)).start()
         if self.button_stop.clicked(events):
             self.active = False
