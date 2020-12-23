@@ -507,7 +507,6 @@ class Sorter:
                 tmp = elements[i]
                 j = i
                 while j >= gap and elements[j-gap] > tmp:
-                    #clock.tick(objects.slider_speed.value)
                     if not self.active:
                         return
 
