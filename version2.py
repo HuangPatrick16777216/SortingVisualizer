@@ -115,6 +115,7 @@ class Objects:
     slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 500))
     button_gen_objs = Button((1400, 100), (125, 40), FONT_MED.render("Generate", 1, BLACK))
     button_random = Button((1400, 150), (125, 40), FONT_MED.render("Randomize", 1, BLACK))
+    slider_speed = Slider((1350, 200), (225, 10), 7, FONT_SMALL, "Speed", 30, (10, 120))
 
     def __init__(self, num_objs):
         self.reset_stats()
@@ -125,6 +126,9 @@ class Objects:
         for i in range(num_objs):
             self.objs.append(i / num_objs)
 
+    def set_objs(self, objs):
+        self.objs = objs[:]
+
     def shuffle(self):
         random.shuffle(self.objs)
 
@@ -134,9 +138,11 @@ class Objects:
         self.stats_write = 0
 
     def draw(self, window, events, mode):
+        print(self.objs)
         self.slider_num_objs.draw(window, events)
         self.button_gen_objs.draw(window, events)
         self.button_random.draw(window, events)
+        self.slider_speed.draw(window, events)
 
         num_objs = len(self.objs)
         if mode == "BARS":
@@ -228,7 +234,7 @@ class Sorter:
             PROCESSES.append(process)
 
     def sort_bubble(self, objects: Objects):
-        elements = objects.objs
+        elements = objects.objs[:]
         num_elements = len(elements)
         clock = pygame.time.Clock()
 
