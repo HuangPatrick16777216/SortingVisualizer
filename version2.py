@@ -15,6 +15,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import math
 import time
 import threading
 import random
@@ -157,7 +158,7 @@ class Objects:
 
         num_objs = len(self.objs)
         if mode == "BARS":
-            border = 1 if num_objs < 300 else 0
+            border = 1 if num_objs < 200 else 0
             x_size = 1500 / num_objs - border
             for i, obj in enumerate(self.objs):
                 x_loc = 1500 * i / num_objs + 50
@@ -173,6 +174,14 @@ class Objects:
                 y_loc = 900 - y_size
                 pygame.draw.rect(window, self.colors[i], (x_loc, y_loc, x_size, 5))
 
+        elif mode == "PIE":
+            thickness = 2 if num_objs < 200 else 1
+            for i, obj in enumerate(self.objs):
+                angle = math.pi * 2 / num_objs * i
+                length = obj * 250 + 50
+                x_loc, y_loc = math.cos(angle) * length, math.sin(angle) * length
+                pygame.draw.line(window, self.colors[i], (800, 600), (800+x_loc, 600+y_loc), thickness)
+
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
                 self.gen_objs(self.slider_num_objs.value)
@@ -186,7 +195,8 @@ class ObjAppearance:
     choice_width = 30
     choices = (
         ("Bars", "BARS"),
-        ("Scatterplot", "SCATTERPLOT")
+        ("Scatterplot", "SCATTERPLOT"),
+        ("Pie", "PIE")
     )
 
     def __init__(self, loc, size, font):
@@ -497,7 +507,7 @@ class Sorter:
                 tmp = elements[i]
                 j = i
                 while j >= gap and elements[j-gap] > tmp:
-                    clock.tick(objects.slider_speed.value)
+                    #clock.tick(objects.slider_speed.value)
                     if not self.active:
                         return
 
