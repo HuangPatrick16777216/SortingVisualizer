@@ -162,6 +162,7 @@ class SortChooser:
             surface.blit(text, text_loc)
 
         window.blit(surface, self.loc)
+        pygame.draw.rect(window, WHITE, self.loc+self.size, 2)
 
         mouse_pos = pygame.mouse.get_pos()
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
