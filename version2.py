@@ -305,7 +305,8 @@ class Sorter:
         ("Insertion", "sort_insertion"),
         ("Selection", "sort_selection"),
         ("Shell", "sort_shell"),
-        ("Comb", "sort_comb")
+        ("Comb", "sort_comb"),
+        ("Cycle", "sort_cycle"),
     )
     
     def __init__(self, loc, size, font):
@@ -612,6 +613,67 @@ class Sorter:
                 if elements[i] > elements[i+gap]:
                     elements[i], elements[i+gap] = elements[i+gap], elements[i]
                     swapped = True
+
+                objects.set_objs(elements)
+        
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
+    def sort_cycle(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        for start in range(0, num_elements-1):
+            objects.stats_read += 3
+            objects.stats_write += 2
+
+            item = elements[start]
+            pos = start
+
+            for i in range(start+1, num_elements):
+                objects.stats_read += 1
+                objects.stats_comp += 1
+
+                if elements[i] < item:
+                    pos += 1
+            
+            if pos == start:
+                continue
+
+            while item == elements[pos]:
+                objects.stats_read += 1
+                objects.stats_comp += 1
+
+                pos += 1
+
+            objects.colors = [WHITE for i in range(num_elements)]
+            objects.colors[pos] = RED
+            elements[pos], item = item, elements[pos]
+
+            while pos != start:
+                clock.tick(objects.slider_speed.value)
+                if not self.active:
+                    return
+
+                pos = start
+                for i in range(start+1, num_elements):
+                    objects.stats_comp += 1
+                    objects.stats_read += 1
+                    if elements[i] < item:
+                        pos += 1
+                
+                while item == elements[pos]:
+                    objects.stats_comp += 1
+                    objects.stats_read += 1
+                    pos += 1
+
+                objects.stats_read += 2
+                objects.stats_write += 2
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[pos] = RED
+
+                elements[pos], item = item, elements[pos]
 
                 objects.set_objs(elements)
         
