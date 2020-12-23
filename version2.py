@@ -17,9 +17,12 @@
 
 import random
 import pygame
+pygame.init()
 
 SCREEN = (1600, 900)
 FPS = 60
+
+FONT_SMALL = pygame.font.SysFont("arial", 16)
 
 BLACK = (0, 0, 0)
 GRAY_DARK = (64, 64, 64)
@@ -137,10 +140,10 @@ class Objects:
                 pygame.draw.rect(window, WHITE, (x_loc, y_loc, x_size, 5))
 
 
-class SortChooser:
+class Sorter:
     scroll_speed = 10
-    choice_width = 20
-    choices = ()
+    choice_width = 30
+    choices = (("Bubble Sort", "sort_bubble"),)
     
     def __init__(self, loc, size, font):
         self.loc = loc
@@ -148,6 +151,7 @@ class SortChooser:
         self.font = font
         self.offset = 0
         self.sel_ind = 0
+        self.button = Button((loc[0]+size[0]+20, loc[1]), (100, 25), FONT_SMALL.render("Sort", 1, BLACK))
 
     def draw(self, window, events):
         loc = self.loc
@@ -161,12 +165,13 @@ class SortChooser:
                 color = CHOICE_SELECT
 
             pygame.draw.rect(surface, color, (0, y_loc, size[0], self.choice_width))
-            text = self.font.render(choice, 1, BLACK)
+            text = self.font.render(choice[0], 1, BLACK)
             text_loc = ((size[0]-text.get_width()) // 2, y_loc + (self.choice_width-text.get_height())//2)
             surface.blit(text, text_loc)
 
         window.blit(surface, self.loc)
         pygame.draw.rect(window, WHITE, self.loc+self.size, 2)
+        self.button.draw(window, events)
 
         mouse_pos = pygame.mouse.get_pos()
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
@@ -187,13 +192,13 @@ class SortChooser:
 
 
 def main():
-    pygame.init()
     pygame.display.set_caption("Sorting Visualizer - Version 2")
     pygame.display.set_icon(pygame.image.load("icon.png"))
     WINDOW = pygame.display.set_mode(SCREEN)
 
     clock = pygame.time.Clock()
     objects = Objects(100)
+    sorter = Sorter((50, 50), (150, 200), FONT_SMALL)
     while True:
         clock.tick(FPS)
         pygame.display.update()
@@ -204,6 +209,7 @@ def main():
                 return
 
         WINDOW.fill(BLACK)
+        sorter.draw(WINDOW, events)
         objects.draw(WINDOW, "SCATTERPLOT")
 
 
