@@ -147,7 +147,8 @@ class SortChooser:
         self.font = font
         self.offset = 0
 
-    def draw(self, window):
+    def draw(self, window, events):
+        loc = self.loc
         size = self.size
         surface = pygame.Surface(self.size)
 
@@ -161,6 +162,15 @@ class SortChooser:
             surface.blit(text, text_loc)
 
         window.blit(surface, self.loc)
+
+        mouse_pos = pygame.mouse.get_pos()
+        if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
+            for event in events:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 4:
+                        self.offset += self.scroll_speed
+                    elif event.button == 5:
+                        self.offset -= self.scroll_speed
 
 
 def main():
@@ -183,7 +193,7 @@ def main():
 
         WINDOW.fill(BLACK)
         objects.draw(WINDOW, "SCATTERPLOT")
-        asdf.draw(WINDOW)
+        asdf.draw(WINDOW, events)
 
 
 main()
