@@ -248,7 +248,8 @@ class ObjAppearance:
         ("Pie", "PIE"),
         ("Pie Scatter", "PIESCATTER"),
         ("Pie BW", "PIEBW"),
-        ("Pie Color", "PIECOLOR")
+        ("Pie Color", "PIECOLOR"),
+        ("Image", "IMAGE"),
     )
 
     def __init__(self, loc, size, font):
@@ -682,7 +683,7 @@ class Sorter:
 
 
 def main():
-    pygame.display.set_caption("Sorting Visualizer - Version 2")
+    pygame.display.set_caption("Sorting Visualizer - Version 3")
     pygame.display.set_icon(pygame.image.load("icon.png"))
     WINDOW = pygame.display.set_mode(SCREEN)
 
