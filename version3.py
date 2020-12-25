@@ -122,7 +122,7 @@ class Slider:
 
 
 class Objects:
-    slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 1024))
+    slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 512))
     button_gen_objs = Button((1400, 100), (125, 40), FONT_MED.render("Generate", 1, BLACK))
     button_random = Button((1400, 150), (125, 40), FONT_MED.render("Randomize", 1, BLACK))
     slider_speed = Slider((1350, 210), (225, 10), 7, FONT_SMALL, "Speed", 30, (10, 240))
