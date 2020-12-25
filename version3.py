@@ -15,6 +15,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import os
 import math
 import time
 import threading
@@ -249,7 +250,6 @@ class Objects:
 
                     if self.colors[i] != WHITE:
                         pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), 1)
-                print()
 
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
@@ -306,7 +306,9 @@ class ObjAppearance:
             if self.image is not None:
                 window.blit(pygame.transform.scale(self.image, (150, 80)), (loc[0]+size[0]+30, loc[1]+50))
             if self.button_load_img.clicked(events):
-                self.image = pygame.image.load(askopenfilename())
+                path = askopenfilename()
+                if os.path.isfile(path):
+                    self.image = pygame.image.load()
 
         mouse_pos = pygame.mouse.get_pos()
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
