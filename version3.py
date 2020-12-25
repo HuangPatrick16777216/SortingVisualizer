@@ -239,13 +239,17 @@ class Objects:
                 scl_img = pygame.transform.scale(image, (total_x_size, 550))
                 for i, obj in enumerate(self.objs):
                     x_loc = total_x_size * i / num_objs + 250
-                    img_x_pos = total_x_size * self.objs.index(obj) / num_objs
+                    try:
+                        img_x_pos = total_x_size * sorted(self.objs).index(obj) / num_objs
+                    except:
+                        continue
 
                     cropped = scl_img.subsurface((img_x_pos, 0, x_size, 550))
                     window.blit(cropped, (x_loc, 350))
 
                     if self.colors[i] != WHITE:
                         pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), 1)
+                print()
 
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
