@@ -258,6 +258,8 @@ class ObjAppearance:
         self.font = font
         self.offset = 0
         self.sel_ind = 0
+        self.image = None
+        self.button_load_img = Button((loc[0]+size[0]+30, loc[1]), (100, 35), FONT_MED.render("Load Image", 1, BLACK))
 
     def draw(self, window, events):
         loc = self.loc
@@ -277,6 +279,8 @@ class ObjAppearance:
 
         window.blit(surface, self.loc)
         pygame.draw.rect(window, WHITE, self.loc+self.size, 2)
+        if self.sel_ind == 8:
+            self.button_load_img.draw(window, events)
 
         mouse_pos = pygame.mouse.get_pos()
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
