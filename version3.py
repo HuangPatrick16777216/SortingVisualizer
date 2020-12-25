@@ -234,13 +234,16 @@ class Objects:
 
         elif mode == "IMAGE":
             if image is not None:
-                x_size = 1500 / num_objs
-                scl_img = pygame.transform.scale(image, (1500, 550))
+                total_x_size = int(image.get_width() / image.get_height() * 550)
+                x_size = total_x_size / num_objs + 1
+                scl_img = pygame.transform.scale(image, (total_x_size, 550))
                 for i, obj in enumerate(self.objs):
-                    x_loc = 1500 * i / num_objs + 50
-                    img_x_pos = 1500 * self.objs.index(obj) / num_objs
+                    x_loc = total_x_size * i / num_objs + 250
+                    img_x_pos = total_x_size * self.objs.index(obj) / num_objs
+
                     cropped = scl_img.subsurface((img_x_pos, 0, x_size, 550))
                     window.blit(cropped, (x_loc, 350))
+
                     if self.colors[i] != WHITE:
                         pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), 1)
 
