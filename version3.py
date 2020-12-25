@@ -21,7 +21,10 @@ import threading
 import colorsys
 import random
 import pygame
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 pygame.init()
+Tk().withdraw()
 
 SCREEN = (1600, 900)
 FPS = 60
@@ -281,6 +284,10 @@ class ObjAppearance:
         pygame.draw.rect(window, WHITE, self.loc+self.size, 2)
         if self.sel_ind == 8:
             self.button_load_img.draw(window, events)
+            if self.image is not None:
+                window.blit(pygame.transform.scale(self.image, (150, 80)), (loc[0]+size[0]+30, loc[1]+50))
+            if self.button_load_img.clicked(events):
+                self.image = pygame.image.load(askopenfilename())
 
         mouse_pos = pygame.mouse.get_pos()
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
