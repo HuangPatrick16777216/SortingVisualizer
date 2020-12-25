@@ -122,7 +122,7 @@ class Slider:
 
 
 class Objects:
-    slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 500))
+    slider_num_objs = Slider((1350, 50), (225, 10), 7, FONT_SMALL, "Amount", 50, (10, 1024))
     button_gen_objs = Button((1400, 100), (125, 40), FONT_MED.render("Generate", 1, BLACK))
     button_random = Button((1400, 150), (125, 40), FONT_MED.render("Randomize", 1, BLACK))
     slider_speed = Slider((1350, 210), (225, 10), 7, FONT_SMALL, "Speed", 30, (10, 240))
@@ -308,7 +308,7 @@ class ObjAppearance:
             if self.button_load_img.clicked(events):
                 path = askopenfilename()
                 if os.path.isfile(path):
-                    self.image = pygame.image.load()
+                    self.image = pygame.image.load(path)
 
         mouse_pos = pygame.mouse.get_pos()
         if loc[0] <= mouse_pos[0] <= loc[0]+size[0] and loc[1] <= mouse_pos[1] <= loc[1]+size[1]:
