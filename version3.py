@@ -148,7 +148,7 @@ class Objects:
         self.stats_read = 0
         self.stats_write = 0
 
-    def draw(self, window, events, mode, sorter):
+    def draw(self, window, events, mode, sorter, image):
         self.slider_num_objs.draw(window, events)
         self.button_gen_objs.draw(window, events)
         self.button_random.draw(window, events)
@@ -231,6 +231,18 @@ class Objects:
                 x_loc, y_loc = math.cos(angle) * length, math.sin(angle) * length
                 color = [255*x for x in colorsys.hsv_to_rgb(obj, 0.8, 0.8)] if self.colors[i] == WHITE else self.colors[i]
                 pygame.draw.line(window, color, (800, 600), (800+x_loc, 600+y_loc), thickness)
+
+        elif mode == "IMAGE":
+            if image is not None:
+                x_size = 1500 / num_objs
+                scl_img = pygame.transform.scale(image, (1500, 550))
+                for i, obj in enumerate(self.objs):
+                    x_loc = 1500 * i / num_objs + 50
+                    img_x_pos = 1500 * self.objs.index(obj) / num_objs
+                    cropped = scl_img.subsurface((img_x_pos, 0, x_size, 550))
+                    window.blit(cropped, (x_loc, 350))
+                    if self.colors[i] != WHITE:
+                        pygame.draw.rect(window, self.colors[i], (x_loc, 350, x_size, 550), 1)
 
         if not sorter.active:
             if self.button_gen_objs.clicked(events):
@@ -714,7 +726,7 @@ def main():
 
         WINDOW.fill(BLACK)
         sorter.draw(WINDOW, events, objects)
-        objects.draw(WINDOW, events, appear.choices[appear.sel_ind][1], sorter)
+        objects.draw(WINDOW, events, appear.choices[appear.sel_ind][1], sorter, appear.image)
         appear.draw(WINDOW, events)
 
 
