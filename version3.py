@@ -333,7 +333,9 @@ class Sorter:
     choice_width = 30
     choices = (
         ("Bubble", "sort_bubble"),
-        ("Cocktail Shaker", "sort_cocktail"),
+        ("Bubble Optimized", "sort_bubble_optimize"),
+        ("Cocktail", "sort_cocktail"),
+        ("Cocktail Optimized", "sort_cocktail_optimize"),
         ("Gnome", "sort_gnome"),
         ("Insertion", "sort_insertion"),
         ("Selection", "sort_selection"),
@@ -425,8 +427,42 @@ class Sorter:
 
                     objects.stats_read += 2
                     objects.stats_write += 2
+
+                objects.set_objs(elements)
+
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
+    def sort_bubble_optimize(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        done = False
+        end = num_elements - 1
+        while not done:
+            done = True
+            for i in range(max(end, 1)):
+                clock.tick(objects.slider_speed.value)
+                if not self.active:
+                    return
+                
+                objects.stats_comp += 1
+                objects.stats_read += 2
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[i] = RED
+                objects.colors[i+1] = GREEN
+
+                if elements[i] > elements[i+1]:
+                    done = False
+                    elements[i], elements[i+1] = elements[i+1], elements[i]
+
+                    objects.stats_read += 2
+                    objects.stats_write += 2
                 
                 objects.set_objs(elements)
+            
+            end -= 1
         
         objects.colors = [BLUE for i in range(num_elements)]
         self.active = False
@@ -479,6 +515,63 @@ class Sorter:
                     objects.stats_write += 2
                 
                 objects.set_objs(elements)
+        
+        objects.colors = [BLUE for i in range(num_elements)]
+        self.active = False
+
+    def sort_cocktail_optimize(self, objects: Objects):
+        elements = objects.objs[:]
+        num_elements = len(elements)
+        clock = pygame.time.Clock()
+
+        done = False
+        start = 0
+        end = num_elements - 1
+        while not done:
+            done = True
+            
+            for i in range(start, end):
+                clock.tick(objects.slider_speed.value)
+                if not self.active:
+                    return
+
+                objects.stats_comp += 1
+                objects.stats_read += 2
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[i] = RED
+                objects.colors[i+1] = GREEN
+
+                if elements[i] > elements[i+1]:
+                    done = False
+                    elements[i], elements[i+1] = elements[i+1], elements[i]
+
+                    objects.stats_read += 2
+                    objects.stats_write += 2
+                
+                objects.set_objs(elements)
+
+            for i in reversed(range(start+1, end+1)):
+                clock.tick(objects.slider_speed.value)
+                if not self.active:
+                    return
+
+                objects.stats_comp += 1
+                objects.stats_read += 2
+                objects.colors = [WHITE for i in range(num_elements)]
+                objects.colors[i] = RED
+                objects.colors[i-1] = GREEN
+
+                if elements[i] < elements[i-1]:
+                    done = False
+                    elements[i], elements[i-1] = elements[i-1], elements[i]
+
+                    objects.stats_read += 2
+                    objects.stats_write += 2
+                
+                objects.set_objs(elements)
+
+            start += 1
+            end -= 1
         
         objects.colors = [BLUE for i in range(num_elements)]
         self.active = False
